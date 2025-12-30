@@ -1,0 +1,1 @@
+Run `flutter create .` to generate iOS project
