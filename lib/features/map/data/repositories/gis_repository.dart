@@ -1281,37 +1281,8 @@ class GisRepository {
   }) async {
     final gov = (governorateNo ?? '').trim();
 
-    // Sovereign lookup source for LGUs: read gis.lgus_boundary directly, keep
-    // only rows with geometry, use governorate_no for strict governorate
-    // filtering, and display lgusn as the local body name.
-    try {
-      final res = await _client
-          .schema('gis')
-          .from('lgus_boundary')
-          .select(
-            'lgus_code, lgus_xcode, lgusn, governorate_no, governorate, '
-            'governor01, community_no, communityn',
-          )
-          .not('geom', 'is', null)
-          .limit(5000);
-
-      final rows = (res)
-          .whereType<Map>()
-          .map((entry) => entry.cast<String, dynamic>())
-          .where((row) {
-        if (gov.isEmpty) return true;
-        return _sameScalar(row['governorate_no'], gov) ||
-            _sameScalar(row['gov_code'], gov) ||
-            _sameText(row['governorate']?.toString(), gov) ||
-            _sameText(row['governor01']?.toString(), gov);
-      }).toList(growable: false);
-
-      final items = _lookupItemsFromRows(rows, kind: _LookupKind.lgu);
-      if (items.isNotEmpty) return items;
-    } catch (_) {}
-
-    // Fallback to the renderable GIS feature mirror if direct table access is
-    // unavailable.
+    // Public runtime source: use the renderable GIS feature mirror first.
+    // Direct gis.lgus_boundary table access can be denied for public roles.
     final boundaryFeatures = await _fetchBoundaryLayerFeatures(
       layerKeys: const ['lgus_boundary', 'v_lgus_core', 'v_lgus_light'],
       limit: 12000,
@@ -1345,6 +1316,33 @@ class GisRepository {
         },
       );
       final items = _lookupItemsFromRows(res, kind: _LookupKind.lgu);
+      if (items.isNotEmpty) return items;
+    } catch (_) {}
+
+    // Last fallback only: direct table access may be denied for public/runtime roles.
+    try {
+      final res = await _client
+          .schema('gis')
+          .from('lgus_boundary')
+          .select(
+            'lgus_code, lgus_xcode, lgusn, governorate_no, governorate, '
+            'governor01, community_no, communityn',
+          )
+          .not('geom', 'is', null)
+          .limit(5000);
+
+      final rows = (res)
+          .whereType<Map>()
+          .map((entry) => entry.cast<String, dynamic>())
+          .where((row) {
+        if (gov.isEmpty) return true;
+        return _sameScalar(row['governorate_no'], gov) ||
+            _sameScalar(row['gov_code'], gov) ||
+            _sameText(row['governorate']?.toString(), gov) ||
+            _sameText(row['governor01']?.toString(), gov);
+      }).toList(growable: false);
+
+      final items = _lookupItemsFromRows(rows, kind: _LookupKind.lgu);
       if (items.isNotEmpty) return items;
     } catch (_) {}
 
