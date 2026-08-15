@@ -7126,23 +7126,27 @@ class _ActionTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: PwfColors.outline),
       ),
-      child: ListTile(
-        onTap: onTap,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14),
-        leading: Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: PwfColors.royalRed.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(10),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
+        child: ListTile(
+          onTap: onTap,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+          leading: Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: PwfColors.royalRed.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: PwfColors.royalRed, size: 20),
           ),
-          child: Icon(icon, color: PwfColors.royalRed, size: 20),
+          title: Text(title,
+              style: const TextStyle(
+                  fontWeight: FontWeight.w800, color: PwfColors.onSurface)),
+          trailing: trailing ??
+              const Icon(Icons.chevron_left, color: PwfColors.onSurface),
         ),
-        title: Text(title,
-            style: const TextStyle(
-                fontWeight: FontWeight.w800, color: PwfColors.onSurface)),
-        trailing: trailing ??
-            const Icon(Icons.chevron_left, color: PwfColors.onSurface),
       ),
     );
   }

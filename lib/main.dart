@@ -1,4 +1,5 @@
-// lib/main.dart
+﻿// lib/main.dart
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -12,15 +13,27 @@ import 'router.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load .env if present (preferred for local/dev). Falls back to --dart-define.
-  try {
-    await dotenv.load(fileName: '.env');
-  } catch (_) {
-    // ignore if missing
+  // Web builds must not require .env as a bundled asset.
+  // Prefer --dart-define, and only try flutter_dotenv on non-web targets.
+  final defineUrl = const String.fromEnvironment('SUPABASE_URL').trim();
+  final defineKey = const String.fromEnvironment('SUPABASE_ANON_KEY').trim();
+
+  var dotEnvLoaded = false;
+  if (!kIsWeb) {
+    try {
+      await dotenv.load(fileName: '.env');
+      dotEnvLoaded = true;
+    } catch (_) {
+      // .env is optional and must not be required for app bootstrap.
+    }
   }
 
-  final envUrl = (dotenv.env['SUPABASE_URL'] ?? '').trim();
-  final envKey = (dotenv.env['SUPABASE_ANON_KEY'] ?? '').trim();
+  final envUrl = defineUrl.isNotEmpty
+      ? defineUrl
+      : (dotEnvLoaded ? (dotenv.env['SUPABASE_URL'] ?? '').trim() : '');
+  final envKey = defineKey.isNotEmpty
+      ? defineKey
+      : (dotEnvLoaded ? (dotenv.env['SUPABASE_ANON_KEY'] ?? '').trim() : '');
 
   final url = (envUrl.startsWith('http') && !envUrl.contains('YOUR_SUPABASE'))
       ? envUrl
@@ -51,7 +64,7 @@ class PalWakfApp extends ConsumerWidget {
         !Supabase.instance.client.rest.url.toString().contains('YOUR_SUPABASE');
 
     return MaterialApp.router(
-      title: 'مستكشف الوقف | Waqf Explorer',
+      title: 'ظ…ط³طھظƒط´ظپ ط§ظ„ظˆظ‚ظپ | Waqf Explorer',
       debugShowCheckedModeBanner: false,
       theme: PwfTheme.lightTheme,
       darkTheme: PwfTheme.darkTheme,
@@ -70,7 +83,7 @@ class PalWakfApp extends ConsumerWidget {
       builder: (context, child) {
         if (child == null) return const SizedBox.shrink();
 
-        // شريط تحذير خفيف عند عدم تمرير مفاتيح Supabase
+        // ط´ط±ظٹط· طھط­ط°ظٹط± ط®ظپظٹظپ ط¹ظ†ط¯ ط¹ط¯ظ… طھظ…ط±ظٹط± ظ…ظپط§طھظٹط­ Supabase
         return Stack(
           children: [
             child,
@@ -93,7 +106,7 @@ class PalWakfApp extends ConsumerWidget {
                           SizedBox(width: 8),
                           Expanded(
                             child: Text(
-                              'Supabase غير مُهيّأ: ضع SUPABASE_URL و SUPABASE_ANON_KEY في ملف .env أو مرّرها عبر --dart-define لتفعيل تسجيل الدخول والبيانات.',
+                              'Supabase ط؛ظٹط± ظ…ظڈظ‡ظٹظ‘ط£: ط¶ط¹ SUPABASE_URL ظˆ SUPABASE_ANON_KEY ظپظٹ ظ…ظ„ظپ .env ط£ظˆ ظ…ط±ظ‘ط±ظ‡ط§ ط¹ط¨ط± --dart-define ظ„طھظپط¹ظٹظ„ طھط³ط¬ظٹظ„ ط§ظ„ط¯ط®ظˆظ„ ظˆط§ظ„ط¨ظٹط§ظ†ط§طھ.',
                               style:
                                   TextStyle(color: Colors.white, fontSize: 12),
                             ),

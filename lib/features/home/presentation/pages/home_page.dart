@@ -107,7 +107,7 @@ class _TopNavBar extends StatelessWidget {
       titleSpacing: 16,
       title: LayoutBuilder(
         builder: (context, c) {
-          final wide = c.maxWidth >= 980;
+          final wide = c.maxWidth >= 1060;
 
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
