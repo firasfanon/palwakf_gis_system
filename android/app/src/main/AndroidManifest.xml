@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="awqaf_legal_system_flutter"
+        android:label="kimi"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
