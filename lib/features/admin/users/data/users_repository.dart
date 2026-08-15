@@ -8,34 +8,37 @@ class UsersRepository {
   final _client = Supabase.instance.client;
 
   Future<List<UserAccount>> list() async {
-    final res = await _client.from('user_accounts').select();
-    if (res != null) {
-      return List<Map<String, dynamic>>.from(res).map(UserAccount.fromMap).toList();
+    try {
+      final res = await _client.from('user_accounts').select();
+      return List<Map<String, dynamic>>.from(res)
+          .map(UserAccount.fromMap)
+          .toList();
+    } catch (_) {
+      // Demo data for local development when Supabase is unavailable.
+      return [
+        UserAccount(
+          id: 'demo_super',
+          email: 'super@waqf.ps',
+          fullName: 'Super User',
+          role: UserRole.superuser,
+          permissions: Permission.values,
+        ),
+        UserAccount(
+          id: 'u1',
+          email: 'admin@waqf.ps',
+          fullName: 'Site Admin',
+          role: UserRole.admin,
+          permissions: const [
+            Permission.manageUsers,
+            Permission.manageHome,
+            Permission.manageSite,
+            Permission.manageMapLayers,
+            Permission.manageLandsCrud,
+            Permission.viewReports,
+          ],
+        ),
+      ];
     }
-    // Demo data للتطوير
-    return [
-      UserAccount(
-        id: 'demo_super',
-        email: 'super@waqf.ps',
-        fullName: 'Super User',
-        role: UserRole.superuser,
-        permissions: Permission.values,
-      ),
-      UserAccount(
-        id: 'u1',
-        email: 'admin@waqf.ps',
-        fullName: 'Site Admin',
-        role: UserRole.admin,
-        permissions: const [
-          Permission.manageUsers,
-          Permission.manageHome,
-          Permission.manageSite,
-          Permission.manageMapLayers,
-          Permission.manageLandsCrud,
-          Permission.viewReports,
-        ],
-      ),
-    ];
   }
 
   Future<void> create(UserAccount u) async {
