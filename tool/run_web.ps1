@@ -1,58 +1,80 @@
-# tool/run_web.ps1
-# تشغيل Flutter Web مع تمرير مفاتيح Supabase من ملف .env بدون كتابتها في الأوامر.
-# الاستخدام:
-#   powershell -ExecutionPolicy Bypass -File tool\run_web.ps1
-# أو (داخل PowerShell):
-#   .\tool\run_web.ps1
+﻿# tool/run_web.ps1
+# Run Flutter Web with Supabase configuration from local environment or .env.
+# This script never prints Supabase values.
 
 $ErrorActionPreference = "Stop"
 
-$root = Split-Path -Parent $PSScriptRoot
-$envFile = Join-Path $root ".env"
+$Root = Split-Path -Parent $PSScriptRoot
+$EnvFile = Join-Path $Root ".env"
 
-if (!(Test-Path $envFile)) {
-  Write-Host "❌ ملف .env غير موجود في جذر المشروع: $envFile" -ForegroundColor Red
-  Write-Host "أنشئ ملف .env وضع فيه:" -ForegroundColor Yellow
-  Write-Host "SUPABASE_URL=..." -ForegroundColor Yellow
-  Write-Host "SUPABASE_ANON_KEY=..." -ForegroundColor Yellow
-  exit 1
-}
+function Read-LocalEnvFile {
+  param(
+    [Parameter(Mandatory = $true)]
+    [string] $Path
+  )
 
-# قراءة .env
-$vars = @{}
-Get-Content $envFile | ForEach-Object {
-  $line = $_.Trim()
-  if ($line.Length -eq 0) { return }
-  if ($line.StartsWith("#")) { return }
+  $Result = @{}
 
-  $parts = $line.Split("=", 2)
-  if ($parts.Length -ne 2) { return }
-
-  $name = $parts[0].Trim()
-  $value = $parts[1].Trim()
-
-  # إزالة علامات اقتباس إن وجدت
-  if (($value.StartsWith('"') -and $value.EndsWith('"')) -or ($value.StartsWith("'") -and $value.EndsWith("'"))) {
-    $value = $value.Substring(1, $value.Length - 2)
+  if (!(Test-Path -LiteralPath $Path)) {
+    return $Result
   }
 
-  $vars[$name] = $value
+  Get-Content -LiteralPath $Path | ForEach-Object {
+    $Line = $_.Trim()
+
+    if ([string]::IsNullOrWhiteSpace($Line)) {
+      return
+    }
+
+    if ($Line.StartsWith("#")) {
+      return
+    }
+
+    $Parts = $Line.Split("=", 2)
+
+    if ($Parts.Length -ne 2) {
+      return
+    }
+
+    $Name = $Parts[0].Trim()
+    $Value = $Parts[1].Trim()
+
+    if (
+      ($Value.StartsWith('"') -and $Value.EndsWith('"')) -or
+      ($Value.StartsWith("'") -and $Value.EndsWith("'"))
+    ) {
+      $Value = $Value.Substring(1, $Value.Length - 2)
+    }
+
+    $Result[$Name] = $Value
+  }
+
+  return $Result
 }
 
-if (-not $vars.ContainsKey("SUPABASE_URL") -or [string]::IsNullOrWhiteSpace($vars["SUPABASE_URL"])) {
-  Write-Host "❌ SUPABASE_URL غير موجود/فارغ في .env" -ForegroundColor Red
-  exit 1
-}
-if (-not $vars.ContainsKey("SUPABASE_ANON_KEY") -or [string]::IsNullOrWhiteSpace($vars["SUPABASE_ANON_KEY"])) {
-  Write-Host "❌ SUPABASE_ANON_KEY غير موجود/فارغ في .env" -ForegroundColor Red
-  exit 1
+$LocalVars = Read-LocalEnvFile -Path $EnvFile
+
+if ([string]::IsNullOrWhiteSpace($env:SUPABASE_URL) -and $LocalVars.ContainsKey("SUPABASE_URL")) {
+  $env:SUPABASE_URL = $LocalVars["SUPABASE_URL"]
 }
 
-Write-Host "✅ تشغيل Flutter Web مع Supabase من .env (بدون طباعة المفاتيح)..." -ForegroundColor Green
+if ([string]::IsNullOrWhiteSpace($env:SUPABASE_ANON_KEY) -and $LocalVars.ContainsKey("SUPABASE_ANON_KEY")) {
+  $env:SUPABASE_ANON_KEY = $LocalVars["SUPABASE_ANON_KEY"]
+}
 
-Set-Location $root
+if ([string]::IsNullOrWhiteSpace($env:SUPABASE_URL)) {
+  throw "SUPABASE_URL must be set in local environment or .env."
+}
+
+if ([string]::IsNullOrWhiteSpace($env:SUPABASE_ANON_KEY)) {
+  throw "SUPABASE_ANON_KEY must be set in local environment or .env."
+}
+
+Write-Host "Running Flutter Web with local Supabase configuration. Values are not printed." -ForegroundColor Green
+
+Set-Location $Root
 flutter pub get | Out-Null
 
 flutter run -d chrome `
-  --dart-define=SUPABASE_URL=$($vars["SUPABASE_URL"]) `
-  --dart-define=SUPABASE_ANON_KEY=$($vars["SUPABASE_ANON_KEY"])
+  --dart-define=SUPABASE_URL="$env:SUPABASE_URL" `
+  --dart-define=SUPABASE_ANON_KEY="$env:SUPABASE_ANON_KEY"
