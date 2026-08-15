@@ -1,5 +1,5 @@
-// lib/features/home/domain/models/home_models.dart
-import 'package:meta/meta.dart';
+﻿// lib/features/home/domain/models/home_models.dart
+import 'package:flutter/foundation.dart';
 
 @immutable
 class HeroSlide {

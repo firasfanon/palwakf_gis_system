@@ -1,22 +1,22 @@
-// lib/presentation/widgets/web/web_container.dart
 import 'package:flutter/material.dart';
 
-/// حاوية قياسية لمحتوى صفحات الويب (maxWidth + padding)
 class WebContainer extends StatelessWidget {
-  final Widget child;
-  final EdgeInsetsGeometry padding;
-
   const WebContainer({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+    this.maxWidth = 1180,
+    this.padding = const EdgeInsets.symmetric(horizontal: 24),
   });
+
+  final Widget child;
+  final double maxWidth;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1200),
+        constraints: BoxConstraints(maxWidth: maxWidth),
         child: Padding(
           padding: padding,
           child: child,

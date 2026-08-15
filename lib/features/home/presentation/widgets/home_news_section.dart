@@ -1,22 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
 
-import '../../../mustakshif_content/domain/enums/mustakshif_content_type.dart';
-import '../../../mustakshif_content/presentation/state/content_list_providers.dart';
-import '../../../mustakshif_content/presentation/widgets/content_card.dart';
+import '../../data/home_providers.dart';
+import '../../domain/models/home_models.dart';
 
 enum HomeNewsSource { ministry, mustakshif }
 
-class HomeNewsSourceNotifier extends StateNotifier<HomeNewsSource> {
-  HomeNewsSourceNotifier() : super(HomeNewsSource.ministry);
-
-  void setSource(HomeNewsSource source) => state = source;
-}
-
-final homeNewsSourceProvider =
-StateNotifierProvider<HomeNewsSourceNotifier, HomeNewsSource>(
-      (ref) => HomeNewsSourceNotifier(),
+final homeNewsSourceProvider = StateProvider<HomeNewsSource>(
+  (ref) => HomeNewsSource.ministry,
 );
 
 class HomeNewsSection extends ConsumerWidget {
@@ -35,11 +26,10 @@ class HomeNewsSection extends ConsumerWidget {
           children: [
             _Header(source: source),
             const SizedBox(height: 12),
-
             if (source == HomeNewsSource.ministry)
               const _MinistryDummy()
             else
-              const _MustakshifLatest(),
+              const _LatestHomeNews(),
           ],
         ),
       ),
@@ -77,7 +67,7 @@ class _Header extends ConsumerWidget {
           selected: {source},
           onSelectionChanged: (set) {
             if (set.isEmpty) return;
-            ref.read(homeNewsSourceProvider.notifier).setSource(set.first);
+            ref.read(homeNewsSourceProvider.notifier).state = set.first;
           },
         ),
       ],
@@ -90,11 +80,10 @@ class _MinistryDummy extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Placeholder until ministry news table is wired.
     const latestNews = [
-      'خبر وزارة (تجريبي): تحديث خدمات الأوقاف الإلكترونية',
-      'خبر وزارة (تجريبي): إعلان لقاء توعوي حول إدارة الوقف',
-      'خبر وزارة (تجريبي): نشر تعميم جديد',
+      'خبر وزارة تجريبي: تحديث خدمات الأوقاف الإلكترونية',
+      'خبر وزارة تجريبي: إعلان لقاء توعوي حول إدارة الوقف',
+      'خبر وزارة تجريبي: نشر تعميم جديد',
     ];
 
     return Column(
@@ -112,42 +101,29 @@ class _MinistryDummy extends StatelessWidget {
   }
 }
 
-class _MustakshifLatest extends ConsumerWidget {
-  const _MustakshifLatest();
+class _LatestHomeNews extends ConsumerWidget {
+  const _LatestHomeNews();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final newsAsync = ref.watch(
-      mustakshifContentListProvider(
-        const ContentListArgs(type: MustakshifContentType.news, adminMode: false),
-      ),
-    );
-
-    final annAsync = ref.watch(
-      mustakshifContentListProvider(
-        const ContentListArgs(
-          type: MustakshifContentType.announcements,
-          adminMode: false,
-        ),
-      ),
-    );
+    final newsAsync = ref.watch(latestNewsProvider);
+    final annAsync = ref.watch(latestAnnouncementsProvider);
 
     return newsAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Text(
-        'خطأ في تحميل أخبار المستكشف: $e',
+        'خطأ في تحميل الأخبار: $e',
         textDirection: TextDirection.rtl,
       ),
       data: (news) {
         return annAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => Text(
-            'خطأ في تحميل إعلانات المستكشف: $e',
+            'خطأ في تحميل الإعلانات: $e',
             textDirection: TextDirection.rtl,
           ),
           data: (anns) {
-            // دمج سريع: نأخذ آخر 3 من كل نوع (تقدر تغيرها لاحقًا)
-            final merged = <dynamic>[
+            final merged = <NewsItem>[
               ...anns.take(3),
               ...news.take(3),
             ];
@@ -155,23 +131,44 @@ class _MustakshifLatest extends ConsumerWidget {
             if (merged.isEmpty) {
               return const Padding(
                 padding: EdgeInsets.symmetric(vertical: 8),
-                child: Text('لا يوجد محتوى منشور حاليًا', textDirection: TextDirection.rtl),
+                child: Text(
+                  'لا يوجد محتوى منشور حاليًا',
+                  textDirection: TextDirection.rtl,
+                ),
               );
             }
 
             return Column(
-              children: merged
-                  .map(
-                    (item) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: ContentCard(item: item, showTypeBadge: true),
-                ),
-              )
-                  .toList(),
+              children: [
+                for (final item in merged) ...[
+                  _NewsTile(item: item),
+                  const Divider(height: 8),
+                ],
+              ],
             );
           },
         );
       },
+    );
+  }
+}
+
+class _NewsTile extends StatelessWidget {
+  const _NewsTile({required this.item});
+
+  final NewsItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Icon(
+        item.isAnnouncement ? Icons.campaign_outlined : Icons.article_outlined,
+      ),
+      title: Text(item.title, textDirection: TextDirection.rtl),
+      subtitle: item.summary == null || item.summary!.isEmpty
+          ? null
+          : Text(item.summary!, textDirection: TextDirection.rtl),
+      dense: true,
     );
   }
 }

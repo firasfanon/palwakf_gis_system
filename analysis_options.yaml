@@ -26,3 +26,11 @@ linter:
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
+
+# Project docs contain integration snippets with placeholders and pseudo-adapter examples.
+# They are reference material, not build/runtime Dart sources, so the analyzer
+# must not treat them as application code.
+analyzer:
+  exclude:
+    - docs/**
+    - instructions/**
