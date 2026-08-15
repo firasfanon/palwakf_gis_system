@@ -24,14 +24,11 @@ class UserRepository {
   }
 
   Future<UserAccount?> getUserById(String id) async {
-    final response = await _client
-        .from(_table)
-        .select()
-        .eq('id', id)
-        .maybeSingle();
+    final response =
+        await _client.from(_table).select().eq('id', id).maybeSingle();
 
     if (response == null) return null;
-    return _convertToUserAccount(response as Map<String, dynamic>);
+    return _convertToUserAccount(response);
   }
 
   Future<void> createUser(UserAccount user) async {
@@ -58,26 +55,24 @@ class UserRepository {
   // Helper methods
   UserAccount _convertToUserAccount(Map<String, dynamic> json) {
     // تحويل permissions من List إلى List<Permission>
-    final permissionsList = (json['permissions'] as List<dynamic>?)
-        ?.map((e) {
-      final permStr = e.toString();
-      // ابحث عن القيمة، وإذا لم توجد استخدم أول قيمة متاحة
-      try {
-        return Permission.values.firstWhere(
+    final permissionsList = (json['permissions'] as List<dynamic>?)?.map((e) {
+          final permStr = e.toString();
+          // ابحث عن القيمة، وإذا لم توجد استخدم أول قيمة متاحة
+          try {
+            return Permission.values.firstWhere(
               (p) => p.toString().split('.').last == permStr,
-        );
-      } catch (_) {
-        return Permission.values.first;
-      }
-    })
-        .toList() ??
+            );
+          } catch (_) {
+            return Permission.values.first;
+          }
+        }).toList() ??
         <Permission>[];
 
     return UserAccount(
       id: json['id'] as String,
       email: json['email'] as String,
       role: UserRole.values.firstWhere(
-            (e) => e.toString().split('.').last == (json['role'] as String),
+        (e) => e.toString().split('.').last == (json['role'] as String),
         orElse: () => UserRole.viewer,
       ),
       permissions: permissionsList,
@@ -89,9 +84,8 @@ class UserRepository {
       'id': user.id,
       'email': user.email,
       'role': user.role.toString().split('.').last,
-      'permissions': user.permissions
-          .map((p) => p.toString().split('.').last)
-          .toList(),
+      'permissions':
+          user.permissions.map((p) => p.toString().split('.').last).toList(),
     };
   }
 }

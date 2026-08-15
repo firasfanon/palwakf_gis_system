@@ -1,1 +1,0 @@
-Run `flutter create .` to generate Web project
