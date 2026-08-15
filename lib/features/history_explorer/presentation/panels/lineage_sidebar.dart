@@ -39,12 +39,19 @@ class LineageSidebar extends StatelessWidget {
           children: [
             Text(
               state.periodMeta?.titleAr ?? state.selectedPeriod?.titleAr ?? '—',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900),
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w900),
             ),
-            if (state.periodMeta?.rangeLabelAr?.trim().isNotEmpty == true || state.selectedPeriod?.rangeLabelAr?.trim().isNotEmpty == true) ...[
+            if (state.periodMeta?.rangeLabelAr?.trim().isNotEmpty == true ||
+                state.selectedPeriod?.rangeLabelAr?.trim().isNotEmpty ==
+                    true) ...[
               const SizedBox(height: 6),
               Text(
-                state.periodMeta?.rangeLabelAr ?? state.selectedPeriod?.rangeLabelAr ?? '',
+                state.periodMeta?.rangeLabelAr ??
+                    state.selectedPeriod?.rangeLabelAr ??
+                    '',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: PwfColors.onSurface.withValues(alpha: 0.62),
                       fontWeight: FontWeight.w700,
@@ -56,16 +63,23 @@ class LineageSidebar extends StatelessWidget {
               state.periodMeta?.summaryAr?.trim().isNotEmpty == true
                   ? state.periodMeta!.summaryAr!
                   : 'تعرض هذه اللوحة الآن مسار الاستكشاف الحالي: كيان تاريخي أو مرجع حديث أو أصل وقفي، مع محاولة ربطه بالسلسلة المقابلة.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.7),
+              style:
+                  Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.7),
             ),
             const SizedBox(height: 10),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: [
-                _StatusChip(label: 'النوع: ${state.selectedPeriodKind.labelAr}', color: PwfColors.primaryBlue),
-                _StatusChip(label: 'السلسلة: ${state.periodMeta?.chainLabelAr ?? '—'}', color: PwfColors.success),
-                _StatusChip(label: 'النمط: ${_modeLabel(state.mode)}', color: PwfColors.warning),
+                _StatusChip(
+                    label: 'النوع: ${state.selectedPeriodKind.labelAr}',
+                    color: PwfColors.primaryBlue),
+                _StatusChip(
+                    label: 'السلسلة: ${state.periodMeta?.chainLabelAr ?? '—'}',
+                    color: PwfColors.success),
+                _StatusChip(
+                    label: 'النمط: ${_modeLabel(state.mode)}',
+                    color: PwfColors.warning),
               ],
             ),
           ],
@@ -82,13 +96,15 @@ class LineageSidebar extends StatelessWidget {
       children.add(_EmptyLineage(state: state));
     } else {
       if (selectedFeature != null) {
-        children.add(_SelectedEntityCard(selected: selectedFeature, state: state));
+        children
+            .add(_SelectedEntityCard(selected: selectedFeature, state: state));
       } else if (selectedModern != null) {
         children.add(_SelectedModernContextCard(selected: selectedModern));
       } else if (selectedWaqf != null) {
         children.add(_SelectedWaqfAssetCard(selected: selectedWaqf));
         children.add(const SizedBox(height: 12));
-        children.add(WaqfReferencePreviewCard(asset: selectedWaqf, title: 'المرجع الوقفي التفصيلي'));
+        children.add(WaqfReferencePreviewCard(
+            asset: selectedWaqf, title: 'المرجع الوقفي التفصيلي'));
       }
       children.add(const SizedBox(height: 12));
       if (state.isResolvingContext) {
@@ -98,9 +114,14 @@ class LineageSidebar extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 8),
             child: Row(
               children: [
-                SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2.2)),
+                SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2.2)),
                 SizedBox(width: 12),
-                Expanded(child: Text('يتم الآن تحليل المسار وربطه بالسجل التاريخي والمرجع الحديث والأصول الوقفية.')),
+                Expanded(
+                    child: Text(
+                        'يتم الآن تحليل المسار وربطه بالسجل التاريخي والمرجع الحديث والأصول الوقفية.')),
               ],
             ),
           ),
@@ -111,7 +132,10 @@ class LineageSidebar extends StatelessWidget {
             title: 'تنبيه',
             child: Text(
               state.contextErrorMessage!,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: PwfColors.royalRed, height: 1.7),
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: PwfColors.royalRed, height: 1.7),
             ),
           ));
           children.add(const SizedBox(height: 12));
@@ -127,9 +151,13 @@ class LineageSidebar extends StatelessWidget {
                 children: [
                   _StatusChip(
                     label: resolved.isSovereign ? 'RPC سيادي' : 'Fallback مرن',
-                    color: resolved.isSovereign ? PwfColors.success : PwfColors.warning,
+                    color: resolved.isSovereign
+                        ? PwfColors.success
+                        : PwfColors.warning,
                   ),
-                  _StatusChip(label: 'المنهج: ${resolved.resolutionMethod}', color: PwfColors.primaryBlue),
+                  _StatusChip(
+                      label: 'المنهج: ${resolved.resolutionMethod}',
+                      color: PwfColors.primaryBlue),
                 ],
               ),
               const SizedBox(height: 10),
@@ -137,7 +165,10 @@ class LineageSidebar extends StatelessWidget {
                 resolved.isSovereign
                     ? 'تم حل المسار الحالي عبر استجابة RPC موحّدة إن كانت متوفرة في قاعدة البيانات، وهذا هو المسار السيادي الأفضل.'
                     : 'المسار الحالي حُلّ عبر مطابقة مرنة بين السجلات التاريخية والمرجع الحديث/الوقفـي. يعمل عمليًا لكنه ليس البديل السيادي النهائي.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.7),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(height: 1.7),
               ),
             ],
           ),
@@ -148,14 +179,16 @@ class LineageSidebar extends StatelessWidget {
             title: 'ملاحظة الربط',
             child: Text(
               resolved.note!,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.7),
+              style:
+                  Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.7),
             ),
           ));
           children.add(const SizedBox(height: 12));
         }
         children.add(_LineageNodesBlock(
           nodes: resolved.lineageNodes,
-          fallbackNode: _fallbackNode(selectedFeature, selectedModern, selectedWaqf),
+          fallbackNode:
+              _fallbackNode(selectedFeature, selectedModern, selectedWaqf),
         ));
         children.add(const SizedBox(height: 12));
         children.add(_ModernContextsBlock(
@@ -175,8 +208,12 @@ class LineageSidebar extends StatelessWidget {
         children.add(_Block(
           title: 'خصائص خام مختصرة',
           child: SelectableText(
-            const JsonEncoder.withIndent('  ').convert(_summaryJson(selectedFeature.attributes)),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(fontFamily: 'monospace', height: 1.6),
+            const JsonEncoder.withIndent('  ')
+                .convert(_summaryJson(selectedFeature.attributes)),
+            style: Theme.of(context)
+                .textTheme
+                .bodySmall
+                ?.copyWith(fontFamily: 'monospace', height: 1.6),
           ),
         ));
       }
@@ -288,7 +325,11 @@ class _EmptyLineage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(message, style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.7)),
+          Text(message,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(height: 1.7)),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -318,24 +359,38 @@ class _SelectedEntityCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(selected.displayLabel, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
+          Text(selected.displayLabel,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w900)),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              _StatusChip(label: selected.levelKey ?? '—', color: PwfColors.primaryBlue),
-              _StatusChip(label: selected.sourceTable ?? 'overlay', color: PwfColors.success),
-              if ((selected.chainKey ?? '').trim().isNotEmpty) _StatusChip(label: selected.chainKey!, color: PwfColors.warning),
+              _StatusChip(
+                  label: selected.levelKey ?? '—',
+                  color: PwfColors.primaryBlue),
+              _StatusChip(
+                  label: selected.sourceTable ?? 'overlay',
+                  color: PwfColors.success),
+              if ((selected.chainKey ?? '').trim().isNotEmpty)
+                _StatusChip(
+                    label: selected.chainKey!, color: PwfColors.warning),
             ],
           ),
           const SizedBox(height: 12),
           _InfoRow(label: 'source_id', value: selected.sourceId),
           _InfoRow(label: 'entity_code', value: selected.entityCode ?? '—'),
-          _InfoRow(label: 'parent_source_id', value: selected.parentSourceId ?? '—'),
-          if (state.resolvedContext.matchedUnitCode?.trim().isNotEmpty == true) ...[
+          _InfoRow(
+              label: 'parent_source_id', value: selected.parentSourceId ?? '—'),
+          if (state.resolvedContext.matchedUnitCode?.trim().isNotEmpty ==
+              true) ...[
             const SizedBox(height: 8),
-            _InfoRow(label: 'matched_unit_code', value: state.resolvedContext.matchedUnitCode!),
+            _InfoRow(
+                label: 'matched_unit_code',
+                value: state.resolvedContext.matchedUnitCode!),
           ],
         ],
       ),
@@ -355,15 +410,24 @@ class _SelectedModernContextCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(selected.communityLabel, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
+          Text(selected.communityLabel,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w900)),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
               const _StatusChip(label: 'community', color: PwfColors.warning),
-              if ((selected.lguLabel ?? '').trim().isNotEmpty) _StatusChip(label: selected.lguLabel!, color: PwfColors.success),
-              if ((selected.governorateLabel ?? '').trim().isNotEmpty) _StatusChip(label: selected.governorateLabel!, color: PwfColors.primaryBlue),
+              if ((selected.lguLabel ?? '').trim().isNotEmpty)
+                _StatusChip(
+                    label: selected.lguLabel!, color: PwfColors.success),
+              if ((selected.governorateLabel ?? '').trim().isNotEmpty)
+                _StatusChip(
+                    label: selected.governorateLabel!,
+                    color: PwfColors.primaryBlue),
             ],
           ),
           const SizedBox(height: 12),
@@ -388,32 +452,45 @@ class _SelectedWaqfAssetCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(selected.name ?? selected.pwfKey, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
+          Text(selected.name ?? selected.pwfKey,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w900)),
           const SizedBox(height: 10),
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
               _StatusChip(label: selected.pwfKey, color: PwfColors.royalRed),
-              if ((selected.community ?? '').trim().isNotEmpty) _StatusChip(label: selected.community!, color: PwfColors.warning),
-              if ((selected.governorate ?? '').trim().isNotEmpty) _StatusChip(label: selected.governorate!, color: PwfColors.primaryBlue),
+              if ((selected.community ?? '').trim().isNotEmpty)
+                _StatusChip(
+                    label: selected.community!, color: PwfColors.warning),
+              if ((selected.governorate ?? '').trim().isNotEmpty)
+                _StatusChip(
+                    label: selected.governorate!, color: PwfColors.primaryBlue),
             ],
           ),
           const SizedBox(height: 12),
           _InfoRow(label: 'المجتمع', value: selected.community ?? '—'),
-          _InfoRow(label: 'الهيئة المحلية', value: selected.municipality ?? '—'),
+          _InfoRow(
+              label: 'الهيئة المحلية', value: selected.municipality ?? '—'),
           _InfoRow(label: 'المحافظة', value: selected.governorate ?? '—'),
           _InfoRow(label: 'النوع', value: selected.typeLabel ?? '—'),
           _InfoRow(label: 'الفئة', value: selected.categoryLabel ?? '—'),
           _InfoRow(label: 'الواقف', value: selected.endowerName ?? '—'),
           _InfoRow(label: 'الحالة', value: selected.statusLabel ?? '—'),
-          if ((selected.purpose ?? '').trim().isNotEmpty) _InfoRow(label: 'الغرض', value: selected.purpose!),
-          if (selected.area != null) _InfoRow(label: 'المساحة', value: selected.area!.toStringAsFixed(2)),
+          if ((selected.purpose ?? '').trim().isNotEmpty)
+            _InfoRow(label: 'الغرض', value: selected.purpose!),
+          if (selected.area != null)
+            _InfoRow(
+                label: 'المساحة', value: selected.area!.toStringAsFixed(2)),
           const SizedBox(height: 12),
           Align(
             alignment: Alignment.centerRight,
             child: OutlinedButton.icon(
-              onPressed: () => context.go('/waqf/${selected.pwfKey.isNotEmpty ? selected.pwfKey : selected.id}'),
+              onPressed: () => context.go(
+                  '/waqf/${selected.pwfKey.isNotEmpty ? selected.pwfKey : selected.id}'),
               icon: const Icon(Icons.open_in_new),
               label: const Text('فتح مرجع الوقف'),
             ),
@@ -434,7 +511,9 @@ class _LineageNodesBlock extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveNodes = nodes.isNotEmpty
         ? nodes
-        : (fallbackNode == null ? const <HistoryLineageNode>[] : [fallbackNode!]);
+        : (fallbackNode == null
+            ? const <HistoryLineageNode>[]
+            : [fallbackNode!]);
 
     return _Block(
       title: 'السجل التاريخي والسلالة',
@@ -447,10 +526,14 @@ class _LineageNodesBlock extends StatelessWidget {
                       margin: const EdgeInsets.only(bottom: 10),
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: node.isPrimary ? PwfColors.primaryBlue.withValues(alpha: 0.07) : PwfColors.background,
+                        color: node.isPrimary
+                            ? PwfColors.primaryBlue.withValues(alpha: 0.07)
+                            : PwfColors.background,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: node.isPrimary ? PwfColors.primaryBlue.withValues(alpha: 0.24) : PwfColors.outline,
+                          color: node.isPrimary
+                              ? PwfColors.primaryBlue.withValues(alpha: 0.24)
+                              : PwfColors.outline,
                         ),
                       ),
                       child: Row(
@@ -462,7 +545,9 @@ class _LineageNodesBlock extends StatelessWidget {
                             margin: const EdgeInsets.only(top: 6),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: node.isPrimary ? PwfColors.primaryBlue : PwfColors.success,
+                              color: node.isPrimary
+                                  ? PwfColors.primaryBlue
+                                  : PwfColors.success,
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -470,21 +555,41 @@ class _LineageNodesBlock extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(node.label, style: const TextStyle(fontWeight: FontWeight.w800)),
+                                Text(node.label,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w800)),
                                 const SizedBox(height: 4),
                                 Text(
                                   [
-                                    if (node.relationLabel?.trim().isNotEmpty == true) node.relationLabel,
-                                    if (node.periodLabel?.trim().isNotEmpty == true) node.periodLabel,
-                                    if (node.periodId != null) 'period=${node.periodId}',
+                                    if (node.relationLabel?.trim().isNotEmpty ==
+                                        true)
+                                      node.relationLabel,
+                                    if (node.periodLabel?.trim().isNotEmpty ==
+                                        true)
+                                      node.periodLabel,
+                                    if (node.periodId != null)
+                                      'period=${node.periodId}',
                                   ].whereType<String>().join(' • '),
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(color: PwfColors.onSurface.withValues(alpha: 0.66)),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                          color: PwfColors.onSurface
+                                              .withValues(alpha: 0.66)),
                                 ),
-                                if (node.originCommunityCode?.trim().isNotEmpty == true) ...[
+                                if (node.originCommunityCode
+                                        ?.trim()
+                                        .isNotEmpty ==
+                                    true) ...[
                                   const SizedBox(height: 4),
                                   Text(
                                     'origin_community_code: ${node.originCommunityCode}',
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: PwfColors.warning, fontWeight: FontWeight.w700),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall
+                                        ?.copyWith(
+                                            color: PwfColors.warning,
+                                            fontWeight: FontWeight.w700),
                                   ),
                                 ],
                               ],
@@ -519,50 +624,67 @@ class _ModernContextsBlock extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _StatusChip(
-            label: enabled ? 'المرجع الحديث مفعّل بصريًا' : 'المرجع الحديث غير مفعّل بصريًا',
+            label: enabled
+                ? 'المرجع الحديث مفعّل بصريًا'
+                : 'المرجع الحديث غير مفعّل بصريًا',
             color: enabled ? PwfColors.success : PwfColors.warning,
           ),
           const SizedBox(height: 10),
           if (contexts.isEmpty)
             Text(
               'لم يتم العثور بعد على community origin مرتبطة بهذا المسار، أو أن lookup الحديث غير متاح في هذه القاعدة.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.7),
+              style:
+                  Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.7),
             )
           else
             Column(
-              children: contexts
-                  .map(
-                    (item) {
-                      final isSelected = selectedCommunityCode == item.communityCode;
-                      return Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.only(bottom: 10),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: isSelected ? PwfColors.primaryBlue.withValues(alpha: 0.08) : PwfColors.background,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: isSelected ? PwfColors.primaryBlue.withValues(alpha: 0.45) : PwfColors.outline),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+              children: contexts.map(
+                (item) {
+                  final isSelected =
+                      selectedCommunityCode == item.communityCode;
+                  return Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? PwfColors.primaryBlue.withValues(alpha: 0.08)
+                          : PwfColors.background,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                          color: isSelected
+                              ? PwfColors.primaryBlue.withValues(alpha: 0.45)
+                              : PwfColors.outline),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                Expanded(child: Text(item.communityLabel, style: const TextStyle(fontWeight: FontWeight.w800))),
-                                if (isSelected)
-                                  const _StatusChip(label: 'محدد على الخريطة', color: PwfColors.primaryBlue),
-                              ],
-                            ),
-                            const SizedBox(height: 6),
-                            if ((item.lguLabel ?? '').trim().isNotEmpty) _InfoRow(label: 'الهيئة المحلية', value: item.lguLabel!),
-                            if ((item.governorateLabel ?? '').trim().isNotEmpty) _InfoRow(label: 'المحافظة', value: item.governorateLabel!),
-                            _InfoRow(label: 'community_code', value: item.communityCode),
+                            Expanded(
+                                child: Text(item.communityLabel,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w800))),
+                            if (isSelected)
+                              const _StatusChip(
+                                  label: 'محدد على الخريطة',
+                                  color: PwfColors.primaryBlue),
                           ],
                         ),
-                      );
-                    },
-                  )
-                  .toList(growable: false),
+                        const SizedBox(height: 6),
+                        if ((item.lguLabel ?? '').trim().isNotEmpty)
+                          _InfoRow(
+                              label: 'الهيئة المحلية', value: item.lguLabel!),
+                        if ((item.governorateLabel ?? '').trim().isNotEmpty)
+                          _InfoRow(
+                              label: 'المحافظة', value: item.governorateLabel!),
+                        _InfoRow(
+                            label: 'community_code', value: item.communityCode),
+                      ],
+                    ),
+                  );
+                },
+              ).toList(growable: false),
             ),
         ],
       ),
@@ -589,62 +711,81 @@ class _WaqfAssetsBlock extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _StatusChip(
-            label: enabled ? 'إظهار الأصول الوقفية مفعّل' : 'إظهار الأصول الوقفية غير مفعّل بصريًا',
+            label: enabled
+                ? 'إظهار الأصول الوقفية مفعّل'
+                : 'إظهار الأصول الوقفية غير مفعّل بصريًا',
             color: enabled ? PwfColors.royalRed : PwfColors.warning,
           ),
           const SizedBox(height: 10),
           if (items.isEmpty)
             Text(
               'لم تُسترجع أصول وقفية مرتبطة بهذا المسار حتى الآن.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.7),
+              style:
+                  Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.7),
             )
           else
             Column(
-              children: items
-                  .map(
-                    (item) {
-                      final isSelected = selectedAssetId == item.id;
-                      return Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.only(bottom: 10),
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: isSelected ? PwfColors.royalRed.withValues(alpha: 0.07) : PwfColors.background,
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: isSelected ? PwfColors.royalRed.withValues(alpha: 0.42) : PwfColors.outline),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+              children: items.map(
+                (item) {
+                  final isSelected = selectedAssetId == item.id;
+                  return Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? PwfColors.royalRed.withValues(alpha: 0.07)
+                          : PwfColors.background,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                          color: isSelected
+                              ? PwfColors.royalRed.withValues(alpha: 0.42)
+                              : PwfColors.outline),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                Expanded(child: Text(item.name ?? item.pwfKey, style: const TextStyle(fontWeight: FontWeight.w800))),
-                                if (isSelected)
-                                  const _StatusChip(label: 'محدد على الخريطة', color: PwfColors.royalRed),
-                              ],
-                            ),
-                            const SizedBox(height: 6),
-                            _InfoRow(label: 'PWF', value: item.pwfKey),
-                            if ((item.community ?? '').trim().isNotEmpty) _InfoRow(label: 'المجتمع', value: item.community!),
-                            if ((item.municipality ?? '').trim().isNotEmpty) _InfoRow(label: 'الهيئة المحلية', value: item.municipality!),
-                            if ((item.governorate ?? '').trim().isNotEmpty) _InfoRow(label: 'المحافظة', value: item.governorate!),
-                            if ((item.endowerName ?? '').trim().isNotEmpty) _InfoRow(label: 'الواقف', value: item.endowerName!),
-                            if ((item.statusLabel ?? '').trim().isNotEmpty) _InfoRow(label: 'الحالة', value: item.statusLabel!),
-                            const SizedBox(height: 8),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: TextButton.icon(
-                                onPressed: () => context.go('/waqf/${item.pwfKey.isNotEmpty ? item.pwfKey : item.id}'),
-                                icon: const Icon(Icons.open_in_new, size: 18),
-                                label: const Text('فتح صفحة الوقف'),
-                              ),
-                            ),
+                            Expanded(
+                                child: Text(item.name ?? item.pwfKey,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w800))),
+                            if (isSelected)
+                              const _StatusChip(
+                                  label: 'محدد على الخريطة',
+                                  color: PwfColors.royalRed),
                           ],
                         ),
-                      );
-                    },
-                  )
-                  .toList(growable: false),
+                        const SizedBox(height: 6),
+                        _InfoRow(label: 'PWF', value: item.pwfKey),
+                        if ((item.community ?? '').trim().isNotEmpty)
+                          _InfoRow(label: 'المجتمع', value: item.community!),
+                        if ((item.municipality ?? '').trim().isNotEmpty)
+                          _InfoRow(
+                              label: 'الهيئة المحلية',
+                              value: item.municipality!),
+                        if ((item.governorate ?? '').trim().isNotEmpty)
+                          _InfoRow(label: 'المحافظة', value: item.governorate!),
+                        if ((item.endowerName ?? '').trim().isNotEmpty)
+                          _InfoRow(label: 'الواقف', value: item.endowerName!),
+                        if ((item.statusLabel ?? '').trim().isNotEmpty)
+                          _InfoRow(label: 'الحالة', value: item.statusLabel!),
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton.icon(
+                            onPressed: () => context.go(
+                                '/waqf/${item.pwfKey.isNotEmpty ? item.pwfKey : item.id}'),
+                            icon: const Icon(Icons.open_in_new, size: 18),
+                            label: const Text('فتح صفحة الوقف'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ).toList(growable: false),
             ),
         ],
       ),
@@ -660,10 +801,15 @@ class _PathPreview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final historical = state.selectedFeature?.displayLabel;
-    final modern = state.selectedModernContext?.communityLabel ?? state.resolvedContext.modernContexts.firstOrNull?.communityLabel;
-    final waqf = state.selectedWaqfAsset?.name ?? state.selectedWaqfAsset?.pwfKey ?? state.resolvedContext.waqfAssets.firstOrNull?.name ?? state.resolvedContext.waqfAssets.firstOrNull?.pwfKey;
+    final modern = state.selectedModernContext?.communityLabel ??
+        state.resolvedContext.modernContexts.firstOrNull?.communityLabel;
+    final waqf = state.selectedWaqfAsset?.name ??
+        state.selectedWaqfAsset?.pwfKey ??
+        state.resolvedContext.waqfAssets.firstOrNull?.name ??
+        state.resolvedContext.waqfAssets.firstOrNull?.pwfKey;
     final parts = <String>[
-      if (state.selectedPeriod?.titleAr?.trim().isNotEmpty == true) state.selectedPeriod!.titleAr,
+      if (state.selectedPeriod?.titleAr.trim().isNotEmpty == true)
+        state.selectedPeriod!.titleAr,
       if (historical?.trim().isNotEmpty == true) historical!,
       if (modern?.trim().isNotEmpty == true) modern!,
       if (waqf?.trim().isNotEmpty == true) waqf!,
@@ -677,7 +823,8 @@ class _PathPreview extends StatelessWidget {
       runSpacing: 8,
       children: parts
           .map((part) => Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
                   color: PwfColors.background,
                   borderRadius: BorderRadius.circular(999),
@@ -689,7 +836,9 @@ class _PathPreview extends StatelessWidget {
                     part,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.w800, color: PwfColors.onSurface),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800,
+                        color: PwfColors.onSurface),
                   ),
                 ),
               ))
@@ -710,7 +859,11 @@ class _Block extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w900)),
+          Text(title,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w900)),
           const SizedBox(height: 12),
           child,
         ],
@@ -743,7 +896,10 @@ class _InfoRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          Expanded(flex: 3, child: Text(value, style: const TextStyle(fontWeight: FontWeight.w800))),
+          Expanded(
+              flex: 3,
+              child: Text(value,
+                  style: const TextStyle(fontWeight: FontWeight.w800))),
         ],
       ),
     );
@@ -764,7 +920,9 @@ class _StatusChip extends StatelessWidget {
         color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w800, fontSize: 12)),
+      child: Text(label,
+          style: TextStyle(
+              color: color, fontWeight: FontWeight.w800, fontSize: 12)),
     );
   }
 }
@@ -772,7 +930,6 @@ class _StatusChip extends StatelessWidget {
 extension _FirstOrNullExt<E> on List<E> {
   E? get firstOrNull => isEmpty ? null : first;
 }
-
 
 class _ReadingGuideBlock extends StatelessWidget {
   const _ReadingGuideBlock();
@@ -786,9 +943,11 @@ class _ReadingGuideBlock extends StatelessWidget {
         children: [
           _GuideLine('ابدأ من نوع العنصر المحدد: تاريخي أو حديث أو وقفي.'),
           SizedBox(height: 8),
-          _GuideLine('انتبه إلى شارة RPC سيادي أو Fallback مرن لفهم درجة ثبات الربط الحالي.'),
+          _GuideLine(
+              'انتبه إلى شارة RPC سيادي أو Fallback مرن لفهم درجة ثبات الربط الحالي.'),
           SizedBox(height: 8),
-          _GuideLine('اقرأ الامتدادات الحديثة بوصفها مرجعًا تفسيريا، لا ككيانات أصيلة للفترة التاريخية نفسها.'),
+          _GuideLine(
+              'اقرأ الامتدادات الحديثة بوصفها مرجعًا تفسيريا، لا ككيانات أصيلة للفترة التاريخية نفسها.'),
         ],
       ),
     );
@@ -807,7 +966,8 @@ class _GuideLine extends StatelessWidget {
       children: [
         const Padding(
           padding: EdgeInsets.only(top: 2),
-          child: Icon(Icons.subdirectory_arrow_left, size: 18, color: PwfColors.primaryBlue),
+          child: Icon(Icons.subdirectory_arrow_left,
+              size: 18, color: PwfColors.primaryBlue),
         ),
         const SizedBox(width: 8),
         Expanded(

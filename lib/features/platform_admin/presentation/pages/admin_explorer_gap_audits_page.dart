@@ -105,7 +105,9 @@ class _AdminExplorerGapAuditsPageState
 
     setState(() => _loading = true);
     try {
-      await ref.read(mapFeedbackRepositoryProvider).reviewExplorerGapAuditRequest(
+      await ref
+          .read(mapFeedbackRepositoryProvider)
+          .reviewExplorerGapAuditRequest(
             requestId: request.id,
             newStatus: nextStatus,
             reviewerNote: _buildTaskSyncNote(
@@ -137,7 +139,8 @@ class _AdminExplorerGapAuditsPageState
     final pending = data.pendingSyncRequests;
     if (pending.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('لا توجد طلبات تحتاج مزامنة ضمن النتائج الحالية.')),
+        const SnackBar(
+            content: Text('لا توجد طلبات تحتاج مزامنة ضمن النتائج الحالية.')),
       );
       return;
     }
@@ -153,14 +156,15 @@ class _AdminExplorerGapAuditsPageState
     var failed = 0;
     for (final request in pending) {
       final task = data.taskFor(request.id);
-      final nextStatus = task == null
-          ? null
-          : _recommendedGapStatusForTaskStatus(task.status);
+      final nextStatus =
+          task == null ? null : _recommendedGapStatusForTaskStatus(task.status);
       if (task == null || nextStatus == null || nextStatus == request.status) {
         continue;
       }
       try {
-        await ref.read(mapFeedbackRepositoryProvider).reviewExplorerGapAuditRequest(
+        await ref
+            .read(mapFeedbackRepositoryProvider)
+            .reviewExplorerGapAuditRequest(
               requestId: request.id,
               newStatus: nextStatus,
               reviewerNote: _buildTaskSyncNote(
@@ -186,7 +190,8 @@ class _AdminExplorerGapAuditsPageState
   Future<void> _exportReviewBoardCsv(_GapAuditDashboardData data) async {
     final csv = _reviewBoardCsv(data);
     final downloaded = await ExplorerExportDownloadService.downloadTextFile(
-      fileName: 'explorer_review_board_sync_${DateTime.now().millisecondsSinceEpoch}.csv',
+      fileName:
+          'explorer_review_board_sync_${DateTime.now().millisecondsSinceEpoch}.csv',
       content: csv,
       mimeType: 'text/csv;charset=utf-8',
     );
@@ -217,14 +222,17 @@ class _AdminExplorerGapAuditsPageState
 
     setState(() => _loading = true);
     try {
-      await ref.read(mapFeedbackRepositoryProvider).reviewExplorerGapAuditRequest(
+      await ref
+          .read(mapFeedbackRepositoryProvider)
+          .reviewExplorerGapAuditRequest(
             requestId: request.id,
             newStatus: newStatus,
             reviewerNote: note.trim().isEmpty ? null : note.trim(),
           );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('تم تحديث الطلب إلى: ${_statusLabel(newStatus)}')),
+        SnackBar(
+            content: Text('تم تحديث الطلب إلى: ${_statusLabel(newStatus)}')),
       );
       _refresh();
     } catch (e) {
@@ -237,7 +245,8 @@ class _AdminExplorerGapAuditsPageState
     }
   }
 
-  Future<void> _acceptAndCreateAuditTask(ExplorerGapAuditRequest request) async {
+  Future<void> _acceptAndCreateAuditTask(
+      ExplorerGapAuditRequest request) async {
     final note = await _askForNote(
       title: 'قبول الطلب وإنشاء مهمة',
       hint: 'ملاحظة اختيارية؛ ستستخدم كملاحظة مراجعة ووصف أولي للمهمة.',
@@ -246,17 +255,20 @@ class _AdminExplorerGapAuditsPageState
 
     setState(() => _loading = true);
     try {
-      await ref.read(mapFeedbackRepositoryProvider).reviewExplorerGapAuditRequest(
+      await ref
+          .read(mapFeedbackRepositoryProvider)
+          .reviewExplorerGapAuditRequest(
             requestId: request.id,
             newStatus: 'accepted',
             reviewerNote: note.trim().isEmpty ? null : note.trim(),
           );
-      final task = await ref.read(auditTaskRepositoryProvider).createFromExplorerGap(
-            requestId: request.id,
-            title: 'مهمة تدقيق فجوة مستكشف: ${request.title}',
-            description: note.trim().isEmpty ? null : note.trim(),
-            priority: request.priority,
-          );
+      final task =
+          await ref.read(auditTaskRepositoryProvider).createFromExplorerGap(
+                requestId: request.id,
+                title: 'مهمة تدقيق فجوة مستكشف: ${request.title}',
+                description: note.trim().isEmpty ? null : note.trim(),
+                priority: request.priority,
+              );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('تم قبول الطلب وإنشاء مهمة: ${task.title}')),
@@ -281,7 +293,9 @@ class _AdminExplorerGapAuditsPageState
 
     setState(() => _loading = true);
     try {
-      final task = await ref.read(auditTaskRepositoryProvider).createFromExplorerGap(
+      final task = await ref
+          .read(auditTaskRepositoryProvider)
+          .createFromExplorerGap(
             requestId: request.id,
             title: 'مهمة تدقيق فجوة مستكشف: ${request.title}',
             description: description.trim().isEmpty ? null : description.trim(),
@@ -301,7 +315,6 @@ class _AdminExplorerGapAuditsPageState
       if (mounted) setState(() => _loading = false);
     }
   }
-
 
   Future<void> _attachEvidence(ExplorerGapAuditRequest request) async {
     final draft = await _askForEvidenceAttachment(request);
@@ -380,16 +393,17 @@ class _AdminExplorerGapAuditsPageState
                                           reviewState: 'rejected',
                                         );
                                       },
-                                onUnderReview: item.reviewState == 'under_review'
-                                    ? null
-                                    : () {
-                                        Navigator.of(dialogContext).pop();
-                                        _reviewEvidenceAttachment(
-                                          request: request,
-                                          item: item,
-                                          reviewState: 'under_review',
-                                        );
-                                      },
+                                onUnderReview:
+                                    item.reviewState == 'under_review'
+                                        ? null
+                                        : () {
+                                            Navigator.of(dialogContext).pop();
+                                            _reviewEvidenceAttachment(
+                                              request: request,
+                                              item: item,
+                                              reviewState: 'under_review',
+                                            );
+                                          },
                               ),
                             )
                             .toList(growable: false),
@@ -404,9 +418,11 @@ class _AdminExplorerGapAuditsPageState
               if (attachments.isNotEmpty)
                 FilledButton.icon(
                   onPressed: () async {
-                    final text = _evidenceAttachmentsReport(request, attachments);
+                    final text =
+                        _evidenceAttachmentsReport(request, attachments);
                     await Clipboard.setData(ClipboardData(text: text));
-                    if (dialogContext.mounted) Navigator.of(dialogContext).pop();
+                    if (dialogContext.mounted)
+                      Navigator.of(dialogContext).pop();
                   },
                   icon: const Icon(Icons.copy, size: 18),
                   label: const Text('نسخ التقرير'),
@@ -590,20 +606,23 @@ class _AdminExplorerGapAuditsPageState
     setState(() => _loading = true);
     try {
       if (acceptFirst && request.status != 'accepted') {
-        await ref.read(mapFeedbackRepositoryProvider).reviewExplorerGapAuditRequest(
+        await ref
+            .read(mapFeedbackRepositoryProvider)
+            .reviewExplorerGapAuditRequest(
               requestId: request.id,
               newStatus: 'accepted',
               reviewerNote: _routingReviewNote(routing),
             );
       }
 
-      var task = await ref.read(auditTaskRepositoryProvider).createFromExplorerGap(
-            requestId: request.id,
-            title: 'مهمة تدقيق موجهة: ${request.title}',
-            description: routing.descriptionOrNull,
-            priority: request.priority,
-            dueDate: routing.dueDate,
-          );
+      var task =
+          await ref.read(auditTaskRepositoryProvider).createFromExplorerGap(
+                requestId: request.id,
+                title: 'مهمة تدقيق موجهة: ${request.title}',
+                description: routing.descriptionOrNull,
+                priority: request.priority,
+                dueDate: routing.dueDate,
+              );
 
       if (routing.assignedToUserIdOrNull != null ||
           routing.assignmentNoteOrNull != null ||
@@ -655,7 +674,8 @@ class _AdminExplorerGapAuditsPageState
         textDirection: TextDirection.rtl,
         child: AlertDialog(
           backgroundColor: const Color(0xFF111827),
-          title: const Text('إرفاق دليل مراجعة', style: TextStyle(color: Colors.white)),
+          title: const Text('إرفاق دليل مراجعة',
+              style: TextStyle(color: Colors.white)),
           content: SizedBox(
             width: 760,
             child: SingleChildScrollView(
@@ -664,15 +684,18 @@ class _AdminExplorerGapAuditsPageState
                 children: [
                   const _StoragePolicyHint(),
                   const SizedBox(height: 10),
-                  _DarkTextField(controller: titleController, label: 'عنوان الدليل'),
+                  _DarkTextField(
+                      controller: titleController, label: 'عنوان الدليل'),
                   const SizedBox(height: 10),
                   _DarkTextField(
                     controller: typeController,
                     label: 'نوع الدليل',
-                    hint: 'source_url / document / map_snapshot / field_note / photo',
+                    hint:
+                        'source_url / document / map_snapshot / field_note / photo',
                   ),
                   const SizedBox(height: 10),
-                  _DarkTextField(controller: urlController, label: 'رابط مرجعي اختياري'),
+                  _DarkTextField(
+                      controller: urlController, label: 'رابط مرجعي اختياري'),
                   const SizedBox(height: 10),
                   _DarkTextField(
                     controller: storageBucketController,
@@ -753,12 +776,14 @@ class _AdminExplorerGapAuditsPageState
                     checksumSha256: _blankToNull(checksumController.text),
                     note: _blankToNull(noteController.text),
                     metadata: <String, dynamic>{
-                      'source': 'bridge_batch_p_evidence_timeline_storage_policy',
+                      'source':
+                          'bridge_batch_p_evidence_timeline_storage_policy',
                       'request_title': request.title,
                       'request_status': request.status,
                       'request_domain': request.domain,
                       'storage_policy': 'explorer-review-evidence/private/10mb',
-                      'original_file_name': _blankToNull(originalFileNameController.text),
+                      'original_file_name':
+                          _blankToNull(originalFileNameController.text),
                       'bridge_batch': 'Q_evidence_upload_ux_reviewer_identity',
                     },
                   ),
@@ -881,7 +906,8 @@ class _AdminExplorerGapAuditsPageState
               fillColor: const Color(0xFF0B1220),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+                borderSide:
+                    BorderSide(color: Colors.white.withValues(alpha: 0.1)),
               ),
             ),
           ),
@@ -947,7 +973,8 @@ class _AdminExplorerGapAuditsPageState
                     if (snapshot.hasError) {
                       return _ErrorCard(error: snapshot.error.toString());
                     }
-                    final data = snapshot.data ?? const _GapAuditDashboardData();
+                    final data =
+                        snapshot.data ?? const _GapAuditDashboardData();
                     final items = data.requests;
                     if (items.isEmpty) return const _EmptyCard();
 
@@ -982,40 +1009,51 @@ class _AdminExplorerGapAuditsPageState
                                   request: request,
                                   linkedTask: linkedTask,
                                   onTriaged: () => _review(request, 'triaged'),
-                                  onAccepted: () => _review(request, 'accepted'),
-                                  onRejected: () => _review(request, 'rejected'),
-                                  onResolved: () => _review(request, 'resolved'),
+                                  onAccepted: () =>
+                                      _review(request, 'accepted'),
+                                  onRejected: () =>
+                                      _review(request, 'rejected'),
+                                  onResolved: () =>
+                                      _review(request, 'resolved'),
                                   onTask: request.status == 'accepted' &&
                                           linkedTask == null
                                       ? () => _createAuditTask(request)
                                       : null,
-                                  onAcceptAndTask: request.status != 'accepted' &&
+                                  onAcceptAndTask: request.status !=
+                                              'accepted' &&
                                           request.status != 'rejected' &&
                                           request.status != 'resolved' &&
                                           linkedTask == null
                                       ? () => _acceptAndCreateAuditTask(request)
                                       : null,
                                   onSyncFromTask: linkedTask != null &&
-                                          _requestNeedsTaskSync(request, linkedTask)
-                                      ? () => _syncRequestFromTask(request, linkedTask!)
+                                          _requestNeedsTaskSync(
+                                              request, linkedTask)
+                                      ? () => _syncRequestFromTask(
+                                          request, linkedTask)
                                       : null,
-                                  onAttachEvidence: () => _attachEvidence(request),
-                                  onShowEvidence: () => _showEvidenceAttachments(request),
-                                  onReviewTimeline: () => _showReviewTimeline(request),
-                                  onStoragePolicy: () => _showStoragePolicy(request),
+                                  onAttachEvidence: () =>
+                                      _attachEvidence(request),
+                                  onShowEvidence: () =>
+                                      _showEvidenceAttachments(request),
+                                  onReviewTimeline: () =>
+                                      _showReviewTimeline(request),
+                                  onStoragePolicy: () =>
+                                      _showStoragePolicy(request),
                                   onRoutedTask: request.status == 'accepted' &&
                                           linkedTask == null
                                       ? () => _createRoutedAuditTask(request)
                                       : null,
-                                  onAcceptAndRoutedTask: request.status != 'accepted' &&
-                                          request.status != 'rejected' &&
-                                          request.status != 'resolved' &&
-                                          linkedTask == null
-                                      ? () => _createRoutedAuditTask(
-                                            request,
-                                            acceptFirst: true,
-                                          )
-                                      : null,
+                                  onAcceptAndRoutedTask:
+                                      request.status != 'accepted' &&
+                                              request.status != 'rejected' &&
+                                              request.status != 'resolved' &&
+                                              linkedTask == null
+                                          ? () => _createRoutedAuditTask(
+                                                request,
+                                                acceptFirst: true,
+                                              )
+                                          : null,
                                 );
                               }),
                               const SizedBox(height: 12),
@@ -1045,7 +1083,6 @@ class _AdminExplorerGapAuditsPageState
   }
 }
 
-
 class _GapAuditDashboardData {
   final List<ExplorerGapAuditRequest> requests;
   final Map<String, AuditTask> tasksBySourceId;
@@ -1059,7 +1096,8 @@ class _GapAuditDashboardData {
 
   int get pendingSyncCount => pendingSyncRequests.length;
 
-  List<ExplorerGapAuditRequest> get pendingSyncRequests => requests.where((request) {
+  List<ExplorerGapAuditRequest> get pendingSyncRequests =>
+      requests.where((request) {
         final task = taskFor(request.id);
         return task != null && _requestNeedsTaskSync(request, task);
       }).toList(growable: false);
@@ -1082,7 +1120,8 @@ class _Header extends StatelessWidget {
             color: PwfColors.primaryBlue.withValues(alpha: 0.18),
             borderRadius: BorderRadius.circular(16),
           ),
-          child: const Icon(Icons.fact_check_outlined, color: PwfColors.primaryGold),
+          child: const Icon(Icons.fact_check_outlined,
+              color: PwfColors.primaryGold),
         ),
         const SizedBox(width: 12),
         const Expanded(
@@ -1210,7 +1249,8 @@ class _InfoBanner extends StatelessWidget {
       decoration: BoxDecoration(
         color: PwfColors.primaryBlue.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: PwfColors.primaryBlue.withValues(alpha: 0.25)),
+        border:
+            Border.all(color: PwfColors.primaryBlue.withValues(alpha: 0.25)),
       ),
       child: const Text(
         'هذه اللوحة تنشئ الآن مهام تدقيق فعلية داخل tasks_system للطلبات المقبولة، مع بقاء سجل المراجعة وسياق الفجوة محفوظين ومربوطين بالمهمة.',
@@ -1284,7 +1324,8 @@ class _MiniMetric extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+          Text(label,
+              style: const TextStyle(color: Colors.white70, fontSize: 12)),
           const SizedBox(height: 4),
           Text(
             value,
@@ -1373,7 +1414,8 @@ class _GapAuditCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF111827),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _severityColor(request.severity).withValues(alpha: 0.45)),
+        border: Border.all(
+            color: _severityColor(request.severity).withValues(alpha: 0.45)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1384,7 +1426,9 @@ class _GapAuditCard extends StatelessWidget {
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               _Chip(text: request.domain, icon: Icons.category_outlined),
-              _Chip(text: _severityLabel(request.severity), color: _severityColor(request.severity)),
+              _Chip(
+                  text: _severityLabel(request.severity),
+                  color: _severityColor(request.severity)),
               _Chip(text: request.displayStatus, icon: Icons.flag_outlined),
               _Chip(text: request.explorerMode, icon: Icons.travel_explore),
               if (isSmartBridge)
@@ -1417,7 +1461,8 @@ class _GapAuditCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               'الإجراء المقترح: ${request.recommendedAction}',
-              style: const TextStyle(color: PwfColors.primaryGold, height: 1.45),
+              style:
+                  const TextStyle(color: PwfColors.primaryGold, height: 1.45),
             ),
           ],
           if (request.sample.isNotEmpty) ...[
@@ -1425,7 +1470,10 @@ class _GapAuditCard extends StatelessWidget {
             Wrap(
               spacing: 6,
               runSpacing: 6,
-              children: request.sample.take(4).map<Widget>((e) => _SampleChip(text: e)).toList(growable: false),
+              children: request.sample
+                  .take(4)
+                  .map<Widget>((e) => _SampleChip(text: e))
+                  .toList(growable: false),
             ),
           ],
           if ((request.reviewerNote ?? '').trim().isNotEmpty) ...[
@@ -1530,7 +1578,6 @@ class _GapAuditCard extends StatelessWidget {
   }
 }
 
-
 class _ReviewBoardHardeningPanel extends StatelessWidget {
   final _GapAuditDashboardData data;
   final VoidCallback onExportCsv;
@@ -1579,9 +1626,13 @@ class _ReviewBoardHardeningPanel extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _Chip(text: 'طلبات من الجسر الذكي: $smartBridgeCount', icon: Icons.hub_outlined),
+              _Chip(
+                  text: 'طلبات من الجسر الذكي: $smartBridgeCount',
+                  icon: Icons.hub_outlined),
               _Chip(text: 'تحتاج مزامنة: $pending', icon: Icons.sync),
-              _Chip(text: 'مقبولة بلا مهمة: $orphanAccepted', icon: Icons.rule_folder_outlined),
+              _Chip(
+                  text: 'مقبولة بلا مهمة: $orphanAccepted',
+                  icon: Icons.rule_folder_outlined),
             ],
           ),
           const SizedBox(height: 12),
@@ -1622,28 +1673,33 @@ class _TaskSyncBanner extends StatelessWidget {
       decoration: BoxDecoration(
         color: PwfColors.primaryGold.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: PwfColors.primaryGold.withValues(alpha: 0.28)),
+        border:
+            Border.all(color: PwfColors.primaryGold.withValues(alpha: 0.28)),
       ),
       child: Wrap(
         spacing: 8,
         runSpacing: 8,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          const Icon(Icons.sync_problem_outlined, color: PwfColors.primaryGold, size: 18),
+          const Icon(Icons.sync_problem_outlined,
+              color: PwfColors.primaryGold, size: 18),
           const Text(
             'مزامنة مطلوبة',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          _Chip(text: 'الطلب: ${request.displayStatus}', icon: Icons.fact_check_outlined),
+          _Chip(
+              text: 'الطلب: ${request.displayStatus}',
+              icon: Icons.fact_check_outlined),
           _Chip(text: 'المهمة: ${task.displayStatus}', icon: Icons.task_alt),
           if (next != null)
-            _Chip(text: 'المقترح: ${_statusLabel(next)}', icon: Icons.arrow_forward),
+            _Chip(
+                text: 'المقترح: ${_statusLabel(next)}',
+                icon: Icons.arrow_forward),
         ],
       ),
     );
   }
 }
-
 
 class _LinkedTaskBanner extends StatelessWidget {
   final AuditTask task;
@@ -1670,8 +1726,14 @@ class _LinkedTaskBanner extends StatelessWidget {
             'مهمة مرتبطة',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          _Chip(text: task.displayStatus, icon: Icons.flag_outlined, color: Colors.green),
-          _Chip(text: task.displayPriority, icon: Icons.priority_high, color: PwfColors.primaryGold),
+          _Chip(
+              text: task.displayStatus,
+              icon: Icons.flag_outlined,
+              color: Colors.green),
+          _Chip(
+              text: task.displayPriority,
+              icon: Icons.priority_high,
+              color: PwfColors.primaryGold),
           Text(
             task.title,
             style: const TextStyle(color: Colors.white70, fontSize: 12),
@@ -1707,7 +1769,8 @@ class _Chip extends StatelessWidget {
             Icon(icon, color: c, size: 15),
             const SizedBox(width: 4),
           ],
-          Text(text, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+          Text(text,
+              style: const TextStyle(color: Colors.white70, fontSize: 12)),
         ],
       ),
     );
@@ -1726,7 +1789,8 @@ class _SampleChip extends StatelessWidget {
         color: Colors.white.withValues(alpha: 0.06),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Text(text, style: const TextStyle(color: Colors.white60, fontSize: 12)),
+      child: Text(text,
+          style: const TextStyle(color: Colors.white60, fontSize: 12)),
     );
   }
 }
@@ -1742,7 +1806,8 @@ class _StoragePolicyHint extends StatelessWidget {
       decoration: BoxDecoration(
         color: PwfColors.primaryBlue.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: PwfColors.primaryBlue.withValues(alpha: 0.28)),
+        border:
+            Border.all(color: PwfColors.primaryBlue.withValues(alpha: 0.28)),
       ),
       child: const Text(
         'Bridge Batch Q: ارفع الملف أولًا إلى bucket explorer-review-evidence ضمن gap-audits/{request_id}/YYYY/MM، ثم الصق Storage object path هنا. الواجهة لا تحفظ الملف الثنائي مباشرة دون مسار Storage، وتعرض الآن هوية منشئ/مراجع الدليل بدل UUID عند توفرها.',
@@ -1772,14 +1837,19 @@ class _StoragePolicyView extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _Chip(text: 'bucket: ${policy.bucketId}', icon: Icons.storage_outlined),
+              _Chip(
+                  text: 'bucket: ${policy.bucketId}',
+                  icon: Icons.storage_outlined),
               _Chip(
                 text: policy.isPublic ? 'عام' : 'خاص',
                 icon: policy.isPublic ? Icons.public : Icons.lock_outline,
                 color: policy.isPublic ? PwfColors.primaryGold : Colors.green,
               ),
-              _Chip(text: 'الحد: ${policy.maxFileSizeLabel}', icon: Icons.sd_storage_outlined),
-              _Chip(text: policy.retentionPolicy, icon: Icons.history_toggle_off),
+              _Chip(
+                  text: 'الحد: ${policy.maxFileSizeLabel}',
+                  icon: Icons.sd_storage_outlined),
+              _Chip(
+                  text: policy.retentionPolicy, icon: Icons.history_toggle_off),
             ],
           ),
           const SizedBox(height: 12),
@@ -1857,13 +1927,16 @@ class _TimelineEventTile extends StatelessWidget {
               if ((event.eventStatus ?? '').trim().isNotEmpty)
                 _Chip(text: event.eventStatus!, icon: Icons.flag_outlined),
               if (event.occurredAt != null)
-                _Chip(text: _dateTimeLabel(event.occurredAt!), icon: Icons.schedule),
+                _Chip(
+                    text: _dateTimeLabel(event.occurredAt!),
+                    icon: Icons.schedule),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             event.eventTitle,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
           ),
           if ((event.eventDetail ?? '').trim().isNotEmpty) ...[
             const SizedBox(height: 6),
@@ -1890,7 +1963,6 @@ class _TimelineEventTile extends StatelessWidget {
     );
   }
 }
-
 
 class _DarkTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -2124,7 +2196,8 @@ class _ErrorCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFB22222).withValues(alpha: 0.16),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFB22222).withValues(alpha: 0.3)),
+        border:
+            Border.all(color: const Color(0xFFB22222).withValues(alpha: 0.3)),
       ),
       child: Text(
         'تعذر تحميل طلبات فجوات المستكشف:\n$error',
@@ -2133,8 +2206,6 @@ class _ErrorCard extends StatelessWidget {
     );
   }
 }
-
-
 
 int? _parseOptionalInt(String value) {
   final text = value.trim();
@@ -2325,7 +2396,8 @@ bool _requestNeedsTaskSync(ExplorerGapAuditRequest request, AuditTask task) {
   return nextStatus != null && nextStatus != request.status;
 }
 
-String? _recommendedGapStatusForTaskStatus(String taskStatus) => switch (taskStatus) {
+String? _recommendedGapStatusForTaskStatus(String taskStatus) =>
+    switch (taskStatus) {
       'done' => 'resolved',
       'cancelled' => 'rejected',
       'blocked' => 'triaged',
@@ -2400,7 +2472,6 @@ Color _severityColor(String severity) => switch (severity) {
       'low' => Colors.green,
       _ => Colors.white54,
     };
-
 
 extension _SafeTakeExtension on String {
   String takeSafe(int maxLength) {

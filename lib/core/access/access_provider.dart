@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../presentation/providers/supabase_providers.dart';
-import '../enums/enums.dart';
 import 'access_profile.dart';
 import 'access_repository.dart';
 

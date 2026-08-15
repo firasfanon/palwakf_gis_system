@@ -7,7 +7,6 @@ import '../../../../core/constants/colors.dart';
 import '../../application/providers/history_explorer_providers.dart';
 import '../../application/state/history_explorer_state.dart';
 import '../../domain/enums/history_explorer_mode.dart';
-import '../../domain/models/history_overlay_feature.dart';
 import '../panels/explorer_sidebar.dart';
 import '../panels/lineage_sidebar.dart';
 import '../widgets/explorer_suite_contract_panel.dart';
@@ -16,7 +15,8 @@ import '../widgets/history_map_canvas.dart';
 import '../widgets/history_timeline_strip.dart';
 
 class HistoricalAdminDivisionsExplorerPage extends ConsumerStatefulWidget {
-  const HistoricalAdminDivisionsExplorerPage({super.key, this.embeddedInAdmin = false});
+  const HistoricalAdminDivisionsExplorerPage(
+      {super.key, this.embeddedInAdmin = false});
 
   final bool embeddedInAdmin;
 
@@ -223,7 +223,8 @@ class _HistoricalAdminHeader extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: const [
-          BoxShadow(color: Color(0x22000000), blurRadius: 18, offset: Offset(0, 8)),
+          BoxShadow(
+              color: Color(0x22000000), blurRadius: 18, offset: Offset(0, 8)),
         ],
       ),
       child: Column(
@@ -237,7 +238,8 @@ class _HistoricalAdminHeader extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(Icons.account_tree_outlined, color: PwfColors.primaryGold, size: 28),
+                child: const Icon(Icons.account_tree_outlined,
+                    color: PwfColors.primaryGold, size: 28),
               ),
               const SizedBox(width: 12),
               const Expanded(
@@ -246,12 +248,18 @@ class _HistoricalAdminHeader extends StatelessWidget {
                   children: [
                     Text(
                       'مستكشف التقسيمات الإدارية التاريخية',
-                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 21),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 21),
                     ),
                     SizedBox(height: 4),
                     Text(
                       'صفحة تابعة لمستكشف التاريخ لتتبع السلالات الإدارية السابقة للتقسيم الحديث ومقارنتها بالمرجع الحالي.',
-                      style: TextStyle(color: Colors.white70, height: 1.45, fontWeight: FontWeight.w700),
+                      style: TextStyle(
+                          color: Colors.white70,
+                          height: 1.45,
+                          fontWeight: FontWeight.w700),
                     ),
                   ],
                 ),
@@ -268,11 +276,24 @@ class _HistoricalAdminHeader extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _HeaderChip(icon: Icons.calendar_month_outlined, label: 'الفترة: $periodTitle'),
-              _HeaderChip(icon: Icons.layers_outlined, label: 'المستوى: $level'),
-              _HeaderChip(icon: Icons.compare_arrows_outlined, label: state.showModernContext ? 'المقارنة الحديثة مفعلة' : 'المقارنة الحديثة متوقفة'),
-              _HeaderChip(icon: Icons.account_tree_outlined, label: state.showLineage ? 'السلالة مفعلة' : 'السلالة متوقفة'),
-              if (embeddedInAdmin) const _HeaderChip(icon: Icons.admin_panel_settings_outlined, label: 'ضمن Dashboard'),
+              _HeaderChip(
+                  icon: Icons.calendar_month_outlined,
+                  label: 'الفترة: $periodTitle'),
+              _HeaderChip(
+                  icon: Icons.layers_outlined, label: 'المستوى: $level'),
+              _HeaderChip(
+                  icon: Icons.compare_arrows_outlined,
+                  label: state.showModernContext
+                      ? 'المقارنة الحديثة مفعلة'
+                      : 'المقارنة الحديثة متوقفة'),
+              _HeaderChip(
+                  icon: Icons.account_tree_outlined,
+                  label:
+                      state.showLineage ? 'السلالة مفعلة' : 'السلالة متوقفة'),
+              if (embeddedInAdmin)
+                const _HeaderChip(
+                    icon: Icons.admin_panel_settings_outlined,
+                    label: 'ضمن Dashboard'),
             ],
           ),
         ],
@@ -317,7 +338,10 @@ class _HistoricalAdminControls extends StatelessWidget {
         children: [
           const Text(
             'أدوات التقسيم الإداري التاريخي',
-            style: TextStyle(color: PwfColors.primaryBlue, fontWeight: FontWeight.w900, fontSize: 15),
+            style: TextStyle(
+                color: PwfColors.primaryBlue,
+                fontWeight: FontWeight.w900,
+                fontSize: 15),
           ),
           const SizedBox(height: 12),
           Wrap(
@@ -340,7 +364,9 @@ class _HistoricalAdminControls extends StatelessWidget {
                         (period) => DropdownMenuItem<int>(
                           value: period.periodNo,
                           child: Text(
-                            period.titleAr.trim().isNotEmpty ? period.titleAr : 'فترة ${period.periodNo}',
+                            period.titleAr.trim().isNotEmpty
+                                ? period.titleAr
+                                : 'فترة ${period.periodNo}',
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -365,7 +391,8 @@ class _HistoricalAdminControls extends StatelessWidget {
                       .map(
                         (level) => DropdownMenuItem<String>(
                           value: level.levelKey,
-                          child: Text(level.displayLabel, overflow: TextOverflow.ellipsis),
+                          child: Text(level.displayLabel,
+                              overflow: TextOverflow.ellipsis),
                         ),
                       )
                       .toList(growable: false),
@@ -411,11 +438,17 @@ class _HistoricalAdminControls extends StatelessWidget {
               ),
             ],
           ),
-          if (state.isSearchDebouncing || (state.runtimeMessage ?? '').trim().isNotEmpty) ...[
+          if (state.isSearchDebouncing ||
+              (state.runtimeMessage ?? '').trim().isNotEmpty) ...[
             const SizedBox(height: 10),
             Text(
-              state.isSearchDebouncing ? 'جاري تجهيز البحث...' : state.runtimeMessage ?? '',
-              style: const TextStyle(color: PwfColors.warning, fontWeight: FontWeight.w700, fontSize: 12),
+              state.isSearchDebouncing
+                  ? 'جاري تجهيز البحث...'
+                  : state.runtimeMessage ?? '',
+              style: const TextStyle(
+                  color: PwfColors.warning,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12),
             ),
           ],
         ],
@@ -432,9 +465,14 @@ class _HistoricalAdminMetrics extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final features = state.filteredFeatures;
-    final chainCount = features.where((f) => (f.chainKey ?? '').trim().isNotEmpty).length;
-    final parentCount = features.where((f) => (f.parentSourceId ?? '').trim().isNotEmpty).length;
-    final spatialCount = features.where((f) => f.geomJson != null || f.centroidJson != null).length;
+    final chainCount =
+        features.where((f) => (f.chainKey ?? '').trim().isNotEmpty).length;
+    final parentCount = features
+        .where((f) => (f.parentSourceId ?? '').trim().isNotEmpty)
+        .length;
+    final spatialCount = features
+        .where((f) => f.geomJson != null || f.centroidJson != null)
+        .length;
     final levelBuckets = <String>{};
     for (final feature in features) {
       final key = (feature.levelKey ?? '').trim();
@@ -445,18 +483,39 @@ class _HistoricalAdminMetrics extends StatelessWidget {
       spacing: 10,
       runSpacing: 10,
       children: [
-        _MetricCard(label: 'العناصر الظاهرة', value: '${features.length}', icon: Icons.account_tree_outlined, color: PwfColors.primaryBlue),
-        _MetricCard(label: 'بسلالة', value: '$chainCount', icon: Icons.schema_outlined, color: PwfColors.success),
-        _MetricCard(label: 'بأصل إداري أعلى', value: '$parentCount', icon: Icons.call_split_outlined, color: PwfColors.warning),
-        _MetricCard(label: 'بتمثيل مكاني', value: '$spatialCount', icon: Icons.place_outlined, color: PwfColors.royalRed),
-        _MetricCard(label: 'مستويات ظاهرة', value: '${levelBuckets.length}', icon: Icons.layers_outlined, color: PwfColors.primaryGold),
+        _MetricCard(
+            label: 'العناصر الظاهرة',
+            value: '${features.length}',
+            icon: Icons.account_tree_outlined,
+            color: PwfColors.primaryBlue),
+        _MetricCard(
+            label: 'بسلالة',
+            value: '$chainCount',
+            icon: Icons.schema_outlined,
+            color: PwfColors.success),
+        _MetricCard(
+            label: 'بأصل إداري أعلى',
+            value: '$parentCount',
+            icon: Icons.call_split_outlined,
+            color: PwfColors.warning),
+        _MetricCard(
+            label: 'بتمثيل مكاني',
+            value: '$spatialCount',
+            icon: Icons.place_outlined,
+            color: PwfColors.royalRed),
+        _MetricCard(
+            label: 'مستويات ظاهرة',
+            value: '${levelBuckets.length}',
+            icon: Icons.layers_outlined,
+            color: PwfColors.primaryGold),
       ],
     );
   }
 }
 
 class _HistoricalAdminGapsAndActions extends StatelessWidget {
-  const _HistoricalAdminGapsAndActions({required this.state, required this.onRefresh});
+  const _HistoricalAdminGapsAndActions(
+      {required this.state, required this.onRefresh});
 
   final HistoryExplorerState state;
   final VoidCallback onRefresh;
@@ -482,7 +541,10 @@ class _HistoricalAdminGapsAndActions extends StatelessWidget {
               const Expanded(
                 child: Text(
                   'محاذاة التقسيمات التاريخية مع الحديث والوقف',
-                  style: TextStyle(color: PwfColors.primaryBlue, fontWeight: FontWeight.w900, fontSize: 15),
+                  style: TextStyle(
+                      color: PwfColors.primaryBlue,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 15),
                 ),
               ),
               TextButton.icon(
@@ -528,7 +590,8 @@ class _HistoricalAdminGapsAndActions extends StatelessWidget {
           if (gaps.isEmpty)
             const Text(
               'لا توجد فجوات واضحة ضمن العناصر الظاهرة حاليًا. استمر بتوسيع الفترات والمستويات للمراجعة.',
-              style: TextStyle(color: PwfColors.success, fontWeight: FontWeight.w800),
+              style: TextStyle(
+                  color: PwfColors.success, fontWeight: FontWeight.w800),
             )
           else
             Wrap(
@@ -542,7 +605,8 @@ class _HistoricalAdminGapsAndActions extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: gap.color.withValues(alpha: 0.07),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: gap.color.withValues(alpha: 0.18)),
+                        border: Border.all(
+                            color: gap.color.withValues(alpha: 0.18)),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -554,7 +618,9 @@ class _HistoricalAdminGapsAndActions extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   gap.title,
-                                  style: TextStyle(color: gap.color, fontWeight: FontWeight.w900),
+                                  style: TextStyle(
+                                      color: gap.color,
+                                      fontWeight: FontWeight.w900),
                                 ),
                               ),
                             ],
@@ -562,7 +628,10 @@ class _HistoricalAdminGapsAndActions extends StatelessWidget {
                           const SizedBox(height: 6),
                           Text(
                             gap.detail,
-                            style: const TextStyle(color: Color(0xFF475569), height: 1.35, fontSize: 12),
+                            style: const TextStyle(
+                                color: Color(0xFF475569),
+                                height: 1.35,
+                                fontSize: 12),
                           ),
                         ],
                       ),
@@ -580,8 +649,11 @@ class _HistoricalAdminGapsAndActions extends StatelessWidget {
     HistoryExplorerState state,
     List<_HistoricalAdminGap> gaps,
   ) async {
-    final period = state.selectedPeriod?.titleAr ?? state.selectedPeriodNo?.toString() ?? 'غير محدد';
-    final level = state.selectedLevelLabel ?? state.selectedLevelKey ?? 'غير محدد';
+    final period = state.selectedPeriod?.titleAr ??
+        state.selectedPeriodNo?.toString() ??
+        'غير محدد';
+    final level =
+        state.selectedLevelLabel ?? state.selectedLevelKey ?? 'غير محدد';
     final lines = <String>[
       'ملخص مستكشف التقسيمات الإدارية التاريخية',
       'الفترة: $period',
@@ -593,7 +665,8 @@ class _HistoricalAdminGapsAndActions extends StatelessWidget {
     await Clipboard.setData(ClipboardData(text: lines.join('\n')));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('تم نسخ ملخص التقسيمات الإدارية التاريخية')),
+        const SnackBar(
+            content: Text('تم نسخ ملخص التقسيمات الإدارية التاريخية')),
       );
     }
   }
@@ -623,7 +696,8 @@ class _HistoricalAdminGap {
         color: PwfColors.warning,
       ));
     }
-    if (state.selectedLevelKey == null || state.selectedLevelKey!.trim().isEmpty) {
+    if (state.selectedLevelKey == null ||
+        state.selectedLevelKey!.trim().isEmpty) {
       gaps.add(const _HistoricalAdminGap(
         title: 'مستوى إداري غير محدد',
         detail: 'اختر مستوى مثل ولاية/قضاء/ناحية/قرية بحسب الفترة المتاحة.',
@@ -634,34 +708,42 @@ class _HistoricalAdminGap {
     if (features.isEmpty && state.selectedPeriodNo != null) {
       gaps.add(const _HistoricalAdminGap(
         title: 'لا توجد عناصر ظاهرة',
-        detail: 'الفترة أو المستوى المختار لا يعرض عناصر مكانية حاليًا، أو يحتاج مصدر بيانات تاريخي.',
+        detail:
+            'الفترة أو المستوى المختار لا يعرض عناصر مكانية حاليًا، أو يحتاج مصدر بيانات تاريخي.',
         icon: Icons.visibility_off_outlined,
         color: PwfColors.royalRed,
       ));
     }
-    final noChain = features.where((f) => (f.chainKey ?? '').trim().isEmpty).length;
+    final noChain =
+        features.where((f) => (f.chainKey ?? '').trim().isEmpty).length;
     if (noChain > 0) {
       gaps.add(_HistoricalAdminGap(
         title: 'عناصر بلا مفتاح سلالة',
-        detail: '$noChain عنصرًا لا يملك chainKey، وهذا يضعف الربط بين التقسيم التاريخي والحديث.',
+        detail:
+            '$noChain عنصرًا لا يملك chainKey، وهذا يضعف الربط بين التقسيم التاريخي والحديث.',
         icon: Icons.account_tree_outlined,
         color: PwfColors.royalRed,
       ));
     }
-    final noParent = features.where((f) => (f.parentSourceId ?? '').trim().isEmpty).length;
+    final noParent =
+        features.where((f) => (f.parentSourceId ?? '').trim().isEmpty).length;
     if (features.length > 1 && noParent > 0) {
       gaps.add(_HistoricalAdminGap(
         title: 'عناصر بلا أصل إداري أعلى',
-        detail: '$noParent عنصرًا لا يملك parentSourceId، لذلك قد لا تظهر علاقات ولاية/قضاء/ناحية بشكل مكتمل.',
+        detail:
+            '$noParent عنصرًا لا يملك parentSourceId، لذلك قد لا تظهر علاقات ولاية/قضاء/ناحية بشكل مكتمل.',
         icon: Icons.call_split_outlined,
         color: PwfColors.warning,
       ));
     }
-    final noSpatial = features.where((f) => f.geomJson == null && f.centroidJson == null).length;
+    final noSpatial = features
+        .where((f) => f.geomJson == null && f.centroidJson == null)
+        .length;
     if (noSpatial > 0) {
       gaps.add(_HistoricalAdminGap(
         title: 'عناصر بلا تمثيل مكاني',
-        detail: '$noSpatial عنصرًا لا يملك هندسة أو مركزًا، ويحتاج ربطًا أو تقديرًا مكانيًا لاحقًا.',
+        detail:
+            '$noSpatial عنصرًا لا يملك هندسة أو مركزًا، ويحتاج ربطًا أو تقديرًا مكانيًا لاحقًا.',
         icon: Icons.place_outlined,
         color: PwfColors.warning,
       ));
@@ -670,7 +752,8 @@ class _HistoricalAdminGap {
     if (noLabel > 0) {
       gaps.add(_HistoricalAdminGap(
         title: 'تسميات ناقصة',
-        detail: '$noLabel عنصرًا يحتاج تسمية عربية/إنجليزية واضحة للعرض والبحث.',
+        detail:
+            '$noLabel عنصرًا يحتاج تسمية عربية/إنجليزية واضحة للعرض والبحث.',
         icon: Icons.label_off_outlined,
         color: PwfColors.royalRed,
       ));
@@ -678,7 +761,8 @@ class _HistoricalAdminGap {
     if (!state.showModernContext) {
       gaps.add(const _HistoricalAdminGap(
         title: 'المقارنة الحديثة غير مفعلة',
-        detail: 'فعّل المرجع الحديث لاختبار انتقال التقسيم التاريخي إلى المحافظة/الهيئة/التجمع الحالي.',
+        detail:
+            'فعّل المرجع الحديث لاختبار انتقال التقسيم التاريخي إلى المحافظة/الهيئة/التجمع الحالي.',
         icon: Icons.compare_arrows_outlined,
         color: PwfColors.primaryBlue,
       ));
@@ -707,7 +791,11 @@ class _HeaderChip extends StatelessWidget {
         children: [
           Icon(icon, color: PwfColors.primaryGold, size: 16),
           const SizedBox(width: 6),
-          Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800, fontSize: 12)),
+          Text(label,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 12)),
         ],
       ),
     );
@@ -738,14 +826,17 @@ class _ToggleChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: color.withValues(alpha: active ? 0.10 : 0.06),
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: color.withValues(alpha: active ? 0.28 : 0.14)),
+          border:
+              Border.all(color: color.withValues(alpha: active ? 0.28 : 0.14)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, color: color, size: 17),
             const SizedBox(width: 6),
-            Text(label, style: TextStyle(color: color, fontWeight: FontWeight.w900, fontSize: 12)),
+            Text(label,
+                style: TextStyle(
+                    color: color, fontWeight: FontWeight.w900, fontSize: 12)),
           ],
         ),
       ),
@@ -754,7 +845,11 @@ class _ToggleChip extends StatelessWidget {
 }
 
 class _MetricCard extends StatelessWidget {
-  const _MetricCard({required this.label, required this.value, required this.icon, required this.color});
+  const _MetricCard(
+      {required this.label,
+      required this.value,
+      required this.icon,
+      required this.color});
 
   final String label;
   final String value;
@@ -779,9 +874,17 @@ class _MetricCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label, style: const TextStyle(color: Color(0xFF64748B), fontWeight: FontWeight.w700, fontSize: 12)),
+                Text(label,
+                    style: const TextStyle(
+                        color: Color(0xFF64748B),
+                        fontWeight: FontWeight.w700,
+                        fontSize: 12)),
                 const SizedBox(height: 4),
-                Text(value, style: TextStyle(color: color, fontWeight: FontWeight.w900, fontSize: 17)),
+                Text(value,
+                    style: TextStyle(
+                        color: color,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 17)),
               ],
             ),
           ),
@@ -792,7 +895,8 @@ class _MetricCard extends StatelessWidget {
 }
 
 class _ActionPill extends StatelessWidget {
-  const _ActionPill({required this.label, required this.icon, required this.onTap});
+  const _ActionPill(
+      {required this.label, required this.icon, required this.onTap});
 
   final String label;
   final IconData icon;
@@ -827,7 +931,9 @@ class _ErrorBanner extends StatelessWidget {
           const Icon(Icons.error_outline, color: PwfColors.royalRed),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(message, style: const TextStyle(color: PwfColors.royalRed, fontWeight: FontWeight.w700)),
+            child: Text(message,
+                style: const TextStyle(
+                    color: PwfColors.royalRed, fontWeight: FontWeight.w700)),
           ),
         ],
       ),

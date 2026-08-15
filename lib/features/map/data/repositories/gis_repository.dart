@@ -11,7 +11,6 @@ final gisRepositoryProvider = Provider<GisRepository>((ref) {
   return GisRepository(ref.watch(supabaseClientProvider));
 });
 
-
 class SpatialIdentifyHit {
   final GisFeatureModel feature;
   final double? distanceMeters;
@@ -170,7 +169,8 @@ class GisRepository {
     double? north,
     int limit = 2000,
   }) async {
-    final hasBbox = west != null && south != null && east != null && north != null;
+    final hasBbox =
+        west != null && south != null && east != null && north != null;
     if (hasBbox) {
       try {
         final rows = await _client.rpc(
@@ -216,7 +216,8 @@ class GisRepository {
     double? north,
     int limit = 2000,
   }) async {
-    final hasBbox = west != null && south != null && east != null && north != null;
+    final hasBbox =
+        west != null && south != null && east != null && north != null;
     if (hasBbox) {
       try {
         final rows = await _client.rpc(
@@ -388,8 +389,8 @@ class GisRepository {
           },
         );
         final layers = (res as List)
-            .map(
-                (e) => GisLayerModel.fromJson((e as Map).cast<String, dynamic>()))
+            .map((e) =>
+                GisLayerModel.fromJson((e as Map).cast<String, dynamic>()))
             .where((layer) => !_isRetiredNaturalBlocksLayerKey(layer.key))
             .toList();
         return layers;
@@ -397,16 +398,17 @@ class GisRepository {
         try {
           final res = await _client.schema('gis').rpc(
             'rpc_map_layers_runtime_list_v1',
-          params: {
-            'p_unit_id': safeUnitId,
-            'p_active_only': activeOnly,
-            'p_public_only': publicOnly,
-          },
-        );
-        final layers = (res as List)
-            .map((e) => GisLayerModel.fromJson((e as Map).cast<String, dynamic>()))
-            .where((layer) => !_isRetiredNaturalBlocksLayerKey(layer.key))
-            .toList();
+            params: {
+              'p_unit_id': safeUnitId,
+              'p_active_only': activeOnly,
+              'p_public_only': publicOnly,
+            },
+          );
+          final layers = (res as List)
+              .map((e) =>
+                  GisLayerModel.fromJson((e as Map).cast<String, dynamic>()))
+              .where((layer) => !_isRetiredNaturalBlocksLayerKey(layer.key))
+              .toList();
           return layers;
         } catch (_) {}
       }
@@ -418,7 +420,8 @@ class GisRepository {
       if (unitId != null && unitId.isNotEmpty) q = q.eq('unit_id', unitId);
 
       try {
-        final res = await q.order('category').order('display_order').order('key');
+        final res =
+            await q.order('category').order('display_order').order('key');
         final layers = (res as List)
             .map((e) =>
                 GisLayerModel.fromJson((e as Map).cast<String, dynamic>()))
@@ -505,7 +508,8 @@ class GisRepository {
     int limit = 2000,
   }) async {
     final normalizedKey = layerKey.trim();
-    if (normalizedKey.isEmpty || _isRetiredNaturalBlocksLayerKey(normalizedKey)) {
+    if (normalizedKey.isEmpty ||
+        _isRetiredNaturalBlocksLayerKey(normalizedKey)) {
       return [];
     }
 
@@ -669,7 +673,8 @@ class GisRepository {
     return GisFeatureModel(
       id: feature.id,
       layerKey: feature.layerKey,
-      titleAr: (title ?? '').trim().isNotEmpty ? title!.trim() : feature.titleAr,
+      titleAr:
+          (title ?? '').trim().isNotEmpty ? title!.trim() : feature.titleAr,
       titleEn: feature.titleEn,
       props: props,
       geom: feature.geom,
@@ -685,9 +690,12 @@ class GisRepository {
   }) {
     if (features.isEmpty) return null;
 
-    final polygonFeatures = features.where((feature) => _isPolygonLike(feature.geom)).toList();
-    final first = polygonFeatures.isNotEmpty ? polygonFeatures.first : features.first;
-    final normalizedBlockNo = (blockNo ?? _naturalBasinNoFromFeature(first)).trim();
+    final polygonFeatures =
+        features.where((feature) => _isPolygonLike(feature.geom)).toList();
+    final first =
+        polygonFeatures.isNotEmpty ? polygonFeatures.first : features.first;
+    final normalizedBlockNo =
+        (blockNo ?? _naturalBasinNoFromFeature(first)).trim();
     final normalizedSiteName = (siteName ?? '').trim();
     final firstName = _naturalBasinNameFromFeature(first).trim();
     final displayName = normalizedSiteName.isNotEmpty
@@ -725,7 +733,8 @@ class GisRepository {
       ...first.props,
       'block_no': normalizedBlockNo,
       'blockname_': displayName,
-      'layer_name_ar': normalizedSiteName.isNotEmpty ? 'اسم الحوض' : 'رقم الحوض',
+      'layer_name_ar':
+          normalizedSiteName.isNotEmpty ? 'اسم الحوض' : 'رقم الحوض',
       'feature_count': polygonFeatures.length,
     };
 
@@ -799,8 +808,10 @@ class GisRepository {
       ];
 
       final hasCode = governorateCode.trim().isNotEmpty;
-      final codeMatches = codeCandidates.any((value) => _sameScalar(value, governorateCode));
-      final nameMatches = nameCandidates.any((value) => _sameText(value, governorateName));
+      final codeMatches =
+          codeCandidates.any((value) => _sameScalar(value, governorateCode));
+      final nameMatches =
+          nameCandidates.any((value) => _sameText(value, governorateName));
 
       if ((hasCode && codeMatches) || (!hasCode && nameMatches)) {
         final mergedProps = <String, dynamic>{
@@ -862,8 +873,10 @@ class GisRepository {
       ];
 
       final hasCode = communityCode.trim().isNotEmpty;
-      final codeMatches = codeCandidates.any((value) => _sameScalar(value, communityCode));
-      final nameMatches = nameCandidates.any((value) => _sameText(value, communityName));
+      final codeMatches =
+          codeCandidates.any((value) => _sameScalar(value, communityCode));
+      final nameMatches =
+          nameCandidates.any((value) => _sameText(value, communityName));
 
       if ((hasCode && codeMatches) || (!hasCode && nameMatches)) {
         final mergedProps = <String, dynamic>{
@@ -1034,8 +1047,6 @@ class GisRepository {
     return items;
   }
 
-
-
   Future<List<LookupItem>> fetchNaturalBlockNumbers({
     required String governorateNo,
     required String communityNo,
@@ -1065,7 +1076,8 @@ class GisRepository {
         'community_no': row['community_no'],
       }));
     }
-    items.sort((a, b) => (int.tryParse(a.code) ?? 0).compareTo(int.tryParse(b.code) ?? 0));
+    items.sort((a, b) =>
+        (int.tryParse(a.code) ?? 0).compareTo(int.tryParse(b.code) ?? 0));
     return items;
   }
 
@@ -1077,7 +1089,8 @@ class GisRepository {
     final res = await _client
         .schema('gis')
         .from(_naturalBlocksLayerKey)
-        .select('block_no, blockname_, sitename_a, governorate_no, community_no')
+        .select(
+            'block_no, blockname_, sitename_a, governorate_no, community_no')
         .eq('governorate_no', int.tryParse(governorateNo) ?? -1)
         .eq('community_no', int.tryParse(communityNo) ?? -1)
         .eq('block_no', int.tryParse(blockNo) ?? -1)
@@ -1087,9 +1100,10 @@ class GisRepository {
     final items = <LookupItem>[];
     for (final row in (res as List).cast<Map<String, dynamic>>()) {
       final siteName = ((row['blockname_']?.toString() ?? '').trim().isNotEmpty
-              ? row['blockname_']?.toString()
-              : row['sitename_a']?.toString())
-          ?.trim() ?? '';
+                  ? row['blockname_']?.toString()
+                  : row['sitename_a']?.toString())
+              ?.trim() ??
+          '';
       if (siteName.isEmpty || !seen.add(siteName)) continue;
       items.add(LookupItem.fromJson({
         'code': siteName,
@@ -1114,7 +1128,8 @@ class GisRepository {
     final res = await _client
         .schema('gis')
         .from(_naturalBlocksLayerKey)
-        .select('blockname_, sitename_a, block_no, governorate_no, community_no')
+        .select(
+            'blockname_, sitename_a, block_no, governorate_no, community_no')
         .eq('governorate_no', int.tryParse(governorateNo) ?? -1)
         .eq('community_no', int.tryParse(communityNo) ?? -1)
         .order('block_no');
@@ -1123,10 +1138,12 @@ class GisRepository {
     final items = <LookupItem>[];
     for (final row in (res as List).cast<Map<String, dynamic>>()) {
       final blockNo = (row['block_no']?.toString() ?? '').trim();
-      final blockName = (((row['blockname_']?.toString() ?? '').trim().isNotEmpty
-              ? row['blockname_']?.toString()
-              : row['sitename_a']?.toString()) ?? '')
-          .trim();
+      final blockName =
+          (((row['blockname_']?.toString() ?? '').trim().isNotEmpty
+                      ? row['blockname_']?.toString()
+                      : row['sitename_a']?.toString()) ??
+                  '')
+              .trim();
       if (blockNo.isEmpty || blockName.isEmpty || !seen.add(blockNo)) continue;
       items.add(LookupItem.fromJson({
         'code': blockNo,
@@ -1183,14 +1200,14 @@ class GisRepository {
 
       if (_isReferenceOnlyCommunity(featureCommunityNo)) return false;
 
-      final matchesGovernorate =
-          (governorateNo ?? '').trim().isEmpty || _sameScalar(featureGovNo, governorateNo);
-      final matchesCommunity =
-          (communityNo ?? '').trim().isEmpty || _sameScalar(featureCommunityNo, communityNo);
-      final matchesBasinNo =
-          (blockNo ?? '').trim().isEmpty || _sameScalar(featureBasinNo, blockNo);
-      final matchesBasinName =
-          (siteName ?? '').trim().isEmpty || _sameText(featureBasinName, siteName);
+      final matchesGovernorate = (governorateNo ?? '').trim().isEmpty ||
+          _sameScalar(featureGovNo, governorateNo);
+      final matchesCommunity = (communityNo ?? '').trim().isEmpty ||
+          _sameScalar(featureCommunityNo, communityNo);
+      final matchesBasinNo = (blockNo ?? '').trim().isEmpty ||
+          _sameScalar(featureBasinNo, blockNo);
+      final matchesBasinName = (siteName ?? '').trim().isEmpty ||
+          _sameText(featureBasinName, siteName);
 
       return matchesGovernorate &&
           matchesCommunity &&
@@ -1210,7 +1227,6 @@ class GisRepository {
     if (filtered.length <= limit) return filtered;
     return filtered.take(limit).toList();
   }
-
 
   Future<List<LookupItem>> fetchModernExplorerGovernoratesFromGis() async {
     // Sovereign lookup source for the Modern Explorer governorate dropdown:
@@ -1240,15 +1256,17 @@ class GisRepository {
       limit: 5000,
     );
     final fromGeometry = _lookupItemsFromFeatures(
-      boundaryFeatures.where(_isRenderableGovernorateFeature).toList(growable: false),
+      boundaryFeatures
+          .where(_isRenderableGovernorateFeature)
+          .toList(growable: false),
       kind: _LookupKind.governorate,
     ).where(_isModernGovernorateLookupItem).toList(growable: false);
     if (fromGeometry.isNotEmpty) return fromGeometry;
 
     try {
       final res = await _client.schema('gis').rpc(
-        'rpc_modern_explorer_governorates_v1',
-      );
+            'rpc_modern_explorer_governorates_v1',
+          );
       final items = _lookupItemsFromRows(res, kind: _LookupKind.governorate)
           .where(_isModernGovernorateLookupItem)
           .toList(growable: false);
@@ -1277,17 +1295,16 @@ class GisRepository {
           .not('geom', 'is', null)
           .limit(5000);
 
-      final rows = (res is List ? res : const [])
+      final rows = (res)
           .whereType<Map>()
           .map((entry) => entry.cast<String, dynamic>())
           .where((row) {
-            if (gov.isEmpty) return true;
-            return _sameScalar(row['governorate_no'], gov) ||
-                _sameScalar(row['gov_code'], gov) ||
-                _sameText(row['governorate']?.toString(), gov) ||
-                _sameText(row['governor01']?.toString(), gov);
-          })
-          .toList(growable: false);
+        if (gov.isEmpty) return true;
+        return _sameScalar(row['governorate_no'], gov) ||
+            _sameScalar(row['gov_code'], gov) ||
+            _sameText(row['governorate']?.toString(), gov) ||
+            _sameText(row['governor01']?.toString(), gov);
+      }).toList(growable: false);
 
       final items = _lookupItemsFromRows(rows, kind: _LookupKind.lgu);
       if (items.isNotEmpty) return items;
@@ -1711,9 +1728,8 @@ class GisRepository {
       final label = kind == _LookupKind.governorate
           ? _pickLookupLabel(raw, _governorateLabelKeys, code: code)
           : _pickLookupLabel(raw, _lguLabelKeys, code: code);
-      final parentCode = kind == _LookupKind.lgu
-          ? _pickString(raw, _governorateCodeKeys)
-          : '';
+      final parentCode =
+          kind == _LookupKind.lgu ? _pickString(raw, _governorateCodeKeys) : '';
       final parentLabel = kind == _LookupKind.lgu
           ? _pickLookupLabel(raw, _governorateLabelKeys, code: parentCode)
           : '';
@@ -1724,7 +1740,8 @@ class GisRepository {
       if (kind == _LookupKind.lgu) {
         final normalizedLabel = _normalizeText(label);
         final normalizedParent = _normalizeText(parentLabel);
-        if (normalizedParent.isNotEmpty && normalizedLabel == normalizedParent) {
+        if (normalizedParent.isNotEmpty &&
+            normalizedLabel == normalizedParent) {
           continue;
         }
         if (_isModernGovernorateName(normalizedLabel)) continue;
@@ -1883,8 +1900,6 @@ class GisRepository {
     return null;
   }
 
-
-
   Future<List<GisFeatureModel>> searchExplorerNavigationFeatures({
     required String query,
     int limit = 18,
@@ -1925,7 +1940,8 @@ class GisRepository {
         titleEn: feature.titleEn,
         props: <String, dynamic>{
           ...feature.props,
-          'layer_name_ar': (feature.props['layer_name_ar'] ?? layerLabel).toString(),
+          'layer_name_ar':
+              (feature.props['layer_name_ar'] ?? layerLabel).toString(),
           'navigation_target_kind': targetKind,
           'navigation_only': true,
         },
@@ -1946,7 +1962,8 @@ class GisRepository {
       for (final feature in features) {
         if (output.length >= limit) return;
         if (!matches(feature, layerLabel)) continue;
-        final marker = '${feature.layerKey.trim().toLowerCase()}::${feature.id}';
+        final marker =
+            '${feature.layerKey.trim().toLowerCase()}::${feature.id}';
         if (!seen.add(marker)) continue;
         output.add(withNavigationLabel(feature, layerLabel, targetKind));
       }
@@ -1973,7 +1990,8 @@ class GisRepository {
     if (output.length < limit) {
       try {
         addMatches(
-          await _fetchLayerPreviewUniverse(layerKey: 'communities_boundary', limit: 8000),
+          await _fetchLayerPreviewUniverse(
+              layerKey: 'communities_boundary', limit: 8000),
           layerLabel: 'تجمع',
           targetKind: 'community',
         );
@@ -1990,11 +2008,13 @@ class GisRepository {
       } catch (_) {}
     }
 
-    final looksLikeOperationalBlockQuery = RegExp(r'\d').hasMatch(query) || needle.length >= 4;
+    final looksLikeOperationalBlockQuery =
+        RegExp(r'\d').hasMatch(query) || needle.length >= 4;
     if (looksLikeOperationalBlockQuery && output.length < limit) {
       try {
         addMatches(
-          await _fetchLayerPreviewUniverse(layerKey: 'guessing_blocks', limit: 7000),
+          await _fetchLayerPreviewUniverse(
+              layerKey: 'guessing_blocks', limit: 7000),
           layerLabel: 'حوض تخمين',
           targetKind: 'guessing_block',
         );
@@ -2022,12 +2042,15 @@ class GisRepository {
         if (kind == 'lgu') value -= 1;
         return value;
       }
+
       final byScore = score(a).compareTo(score(b));
       if (byScore != 0) return byScore;
       return a.displayTitle.compareTo(b.displayTitle);
     });
 
-    return output.length <= limit ? output : output.take(limit).toList(growable: false);
+    return output.length <= limit
+        ? output
+        : output.take(limit).toList(growable: false);
   }
 
   Future<List<Map<String, dynamic>>> searchPlaces({

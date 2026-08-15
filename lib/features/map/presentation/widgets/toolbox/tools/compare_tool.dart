@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../../core/constants/colors.dart';
-import '../../../../../../core/constants/enums.dart';
 import '../../../../domain/models/gis_layer_model.dart';
 import '../../../providers/map_provider.dart';
 import '../../../providers/map_ui_providers.dart';

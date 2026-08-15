@@ -186,7 +186,7 @@ class AdminGisLayersRepository {
 
     final ids = layers
         .map((l) => l.id)
-        .where((id) => id != null && id!.isNotEmpty)
+        .where((id) => id != null && id.isNotEmpty)
         .map((id) => id!)
         .toList();
 
